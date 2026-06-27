@@ -1,0 +1,20 @@
+# This file contains local machine configuration for development
+# Copy this file to local.properties and fill in your own values
+# DO NOT COMMIT local.properties to version control!
+
+# Android SDK location
+sdk.dir=/path/to/Android/sdk
+
+# Google Maps Static API Key
+# Get from: https://console.cloud.google.com/
+google.maps.key=YOUR_GOOGLE_MAPS_API_KEY_HERE
+
+# Firebase Database URL (from Firebase Console)
+firebase.database.url=https://hexagonalgamesjr.firebaseio.com
+
+# Signing configuration for release builds
+# keytool -genkey -v -keystore release.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias eventorias
+storeFile=../release.keystore
+storePassword=your_keystore_password
+keyAlias=eventorias
+keyPassword=your_key_password
