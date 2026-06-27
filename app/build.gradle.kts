@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.eventorias.android"
+    namespace = "fr.quinquenaire.p15_eventorias_jr"
     compileSdk = 36
 
     defaultConfig {
@@ -20,10 +20,13 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = getLocalProperty("google.maps.key")
 
         // Build Config Fields
         buildConfigField(
@@ -79,6 +82,10 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.firebase.config)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
     debugImplementation(libs.compose.ui.tooling)
 
     // Lifecycle & Coroutines

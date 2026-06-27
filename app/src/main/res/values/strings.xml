@@ -1,3 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">p15_eventorias_jr</string>
+
+    <!-- General -->
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
+    <string name="no_data">No data available</string>
+    <string name="something_went_wrong">Something went wrong</string>
+
+    <!-- Authentication -->
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+
+    <!-- Events -->
+    <string name="events">Events</string>
+    <string name="event_list">Event List</string>
+    <string name="event_details">Event Details</string>
+    <string name="create_event">Create Event</string>
+    <string name="event_title">Event Title</string>
+    <string name="event_description">Description</string>
+    <string name="event_date">Date</string>
+    <string name="event_time">Time</string>
+    <string name="event_location">Location</string>
+    <string name="event_category">Category</string>
+    <string name="search_events">Search events...</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_by_date">Date</string>
+    <string name="sort_by_category">Category</string>
+    <string name="no_events">No events found</string>
+
+    <!-- Profile -->
+    <string name="profile">Profile</string>
+    <string name="user_profile">User Profile</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="notifications">Notifications</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="notification_disabled">Notifications disabled</string>
+    <string name="notification_enabled">Notifications enabled</string>
+
+    <!-- Navigation -->
+    <string name="tab_events">Events</string>
+    <string name="tab_profile">Profile</string>
+
+    <!-- Map -->
+    <string name="event_location_map">Event Location</string>
+    <string name="open_in_maps">Open in Maps</string>
+
+    <!-- Image -->
+    <string name="pick_image">Pick Image</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="event_image">Event Image</string>
+    <string name="user_avatar">User Avatar</string>
+
+    <!-- Accessibility -->
+    <string name="content_description_profile_image">User profile image</string>
+    <string name="content_description_event_image">Event image</string>
+    <string name="content_description_menu">Menu button</string>
+    <string name="content_description_back">Back button</string>
+    <string name="content_description_close">Close button</string>
+    <string name="content_description_fab">Create new event button</string>
 </resources>
