@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.ui.theme
+package fr.quinquenaire.p15_eventorias_jr.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.P15_eventorias_jr" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorOnPrimary">@color/app_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorOnSecondary">@color/app_on_secondary</item>
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorOnBackground">@color/app_on_background</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="colorOnSurface">@color/app_on_surface</item>
+        <item name="colorError">@color/app_error</item>
+        <item name="colorOnError">@color/app_on_error</item>
+
+        <item name="android:statusBarColor">@color/app_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

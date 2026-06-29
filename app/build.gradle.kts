@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.androidx.appcompat)
     debugImplementation(libs.compose.ui.tooling)
 
     // Lifecycle & Coroutines

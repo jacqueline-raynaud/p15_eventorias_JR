@@ -27,8 +27,8 @@ class FirebaseStorageManager(private val firebaseStorage: FirebaseStorage) {
             avatarRef.putFile(avatarUri).await()
             avatarRef.downloadUrl.await().toString()
         } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error uploading user avatar")
-            Log.e("EventoriasApp", "Error uploading user avatar", e)
+            //Log.e("EventoriasApp", e, "Error uploading UserProfile avatar")
+            Log.e("EventoriasApp", "Error uploading UserProfile avatar", e)
             throw e
         }
     }

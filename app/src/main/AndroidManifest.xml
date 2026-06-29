@@ -21,16 +21,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.P15_eventorias_jr">
+
+
+        <!-- Firebase Auth Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".FirebaseUiActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.P15_eventorias_jr">
+            android:theme="@style/Theme.P15_eventorias_jr"
+            tools:replace="android:theme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.P15_eventorias_jr">
+
+
+        </activity>
+
         <!-- Firebase Cloud Messaging Service -->
         <service
             android:name=".service.EventoriasMessagingService"
