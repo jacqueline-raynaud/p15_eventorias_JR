@@ -38,8 +38,8 @@
     <string name="event_category">Category</string>
     <string name="search_events">Search events...</string>
     <string name="sort_by">Sort by</string>
-    <string name="sort_by_date">Date</string>
-    <string name="sort_by_category">Category</string>
+    <string name="sort_by_date">Sort by Date</string>
+    <string name="sort_by_category">Sort by Category</string>
     <string name="no_events">No events found</string>
     <string name="filter_all">All</string>
     <string name="event_list_empty">No events available</string>
@@ -78,4 +78,6 @@
     <string name="content_description_back">Back button</string>
     <string name="content_description_close">Close button</string>
     <string name="content_description_fab">Create new event button</string>
+    <string name="search_placeholder">Type your text here</string>
+    <string name="Back_to_the_list">Back to the list</string>
 </resources>

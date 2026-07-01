@@ -7,4 +7,6 @@ interface EventListAction {
     data class FilterByCategory(val category: String?) : EventListAction
     data class ChangeSortOrder(val sortOrder: SortOrder) : EventListAction
     data class OnEventClick(val eventId: String) : EventListAction
+    data object OnCreateEventClick : EventListAction
+    data class OnSearchQueryChanged (val query: String) : EventListAction
 }

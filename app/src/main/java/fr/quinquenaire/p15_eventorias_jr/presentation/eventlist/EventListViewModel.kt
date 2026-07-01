@@ -29,8 +29,10 @@ class EventListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _selectedCategory = MutableStateFlow<String?>(null)
-    private val _sortOrder = MutableStateFlow(SortOrder.BY_DATE)
+    private val _sortOrder = MutableStateFlow(SortOrder.BY_DATE_ASC)
     private val _error = MutableStateFlow<String?>(null)
+    private val _searchQuery = MutableStateFlow("")
+
 
     // Flow des événements mappés depuis Firestore
     private val _allEvents: StateFlow<List<EventListUiState>> = getEventsUseCase()
@@ -47,21 +49,37 @@ class EventListViewModel @Inject constructor(
         _allEvents,
         _selectedCategory,
         _sortOrder,
-        _error
-    ) { events, category, sortOrder, error ->
+        _error,
+        _searchQuery
+    ) {  array ->
+        // combine avec 5 sources utilise un tableau
+        val events = array[0] as List<EventListUiState>
+        val category = array[1] as String?
+        val sortOrder = array[2] as SortOrder
+        val error = array[3] as String?
+        val query = array[4] as String
+
         EventListMutableState(
             events = events
-                .filter { category == null || it.category == category }
+                .filter { event ->
+                    category == null || event.category == category }
+                .filter { event ->
+                    query.isBlank()
+                            || event.name.contains(query, ignoreCase = true)
+                            || event.locationName.contains(query, ignoreCase = true)}
                 .let { list ->
                     when (sortOrder) {
-                        SortOrder.BY_DATE     -> list.sortedBy { it.date }
-                        SortOrder.BY_CATEGORY -> list.sortedBy { it.category }
+                        SortOrder.BY_DATE_ASC  -> list.sortedBy { it.date }
+                        SortOrder.BY_DATE_DESC-> list.sortedByDescending { it.date }
+
+                    //SortOrder.BY_CATEGORY -> list.sortedBy { it.category }
                     }
                 },
             isLoading = false,
             error = error,
             selectedCategory = category,
-            sortOrder = sortOrder
+            sortOrder = sortOrder,
+            searchQuery = query
         )
     }
         .stateIn(
@@ -80,12 +98,20 @@ class EventListViewModel @Inject constructor(
             is EventListAction.FilterByCategory -> _selectedCategory.update { action.category }
             is EventListAction.ChangeSortOrder  -> _sortOrder.update { action.sortOrder }
             is EventListAction.OnEventClick     -> onEventClick(action.eventId)
+            is EventListAction.OnCreateEventClick -> OnCreateEventClick()
+            is EventListAction.OnSearchQueryChanged -> _searchQuery.update { action.query }
         }
     }
 
     private fun onEventClick(eventId: String) {
         viewModelScope.launch {
             _effect.emit(EventListEffect.NavigateToEventDetail(eventId))
+        }
+    }
+
+    private fun OnCreateEventClick() {
+        viewModelScope.launch {
+            _effect.emit(EventListEffect.NavigateToCreateEvent)
         }
     }
 }

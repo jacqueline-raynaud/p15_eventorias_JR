@@ -8,13 +8,24 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +49,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun EventListScreen(
     onNavigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateToCreate: () -> Unit,
     viewModel: EventListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,6 +64,9 @@ fun EventListScreen(
 
                 is EventListEffect.ShowSnackbar ->
                     snackbarHostState.showSnackbar(effect.message)
+
+                is EventListEffect.NavigateToCreateEvent ->
+                    onNavigateToCreate()
             }
         }
     }
@@ -63,8 +78,23 @@ fun EventListScreen(
                 sortOrder = uiState.sortOrder,
                 onSortOrderChanged = { order ->
                     viewModel.handleAction(EventListAction.ChangeSortOrder(order))
+                },
+                searchQuery = uiState.searchQuery,
+                onSearchQueryChanged = { query ->
+                    viewModel.handleAction(EventListAction.OnSearchQueryChanged(query))
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.handleAction(EventListAction.OnCreateEventClick) }
+
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.create_event)
+                )
+            }
         },
         modifier = modifier
     ) { innerPadding ->
@@ -90,6 +120,7 @@ fun EventListScreen(
                         message = uiState.error!!,
                         onRetry = { viewModel.handleAction(EventListAction.LoadEvents) }
                     )
+
                     uiState.events.isEmpty() -> EmptyContent()
                     else -> EventList(
                         events = uiState.events,
@@ -111,39 +142,96 @@ fun EventListScreen(
 @Composable
 private fun EventListTopBar(
     sortOrder: SortOrder,
-    onSortOrderChanged: (SortOrder) -> Unit
+    searchQuery: String,
+    onSortOrderChanged: (SortOrder) -> Unit,
+    onSearchQueryChanged: (String) -> Unit
 ) {
-    TopAppBar(
-        title = { Text(text = stringResource(R.string.event_list_title)) },
-        actions = {
-            // Bouton tri par date
-            IconButton(
-                onClick = { onSortOrderChanged(SortOrder.BY_DATE) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = stringResource(R.string.sort_by_date),
-                    tint = if (sortOrder == SortOrder.BY_DATE)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            // Bouton tri par catégorie
-            IconButton(
-                onClick = { onSortOrderChanged(SortOrder.BY_CATEGORY) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.List,
-                    contentDescription = stringResource(R.string.sort_by_category),
-                    tint = if (sortOrder == SortOrder.BY_CATEGORY)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+
+    var searchActive by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    if (searchActive) {
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
-    )
+        TopAppBar(
+            title = {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChanged, // Met à jour le ViewModel à chaque lettre tapée
+                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
+                    // On rend le fond du TextField transparent pour qu'il s'intègre parfaitement à la TopBar
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                        unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                        disabledContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                        focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                        unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    singleLine = true
+                )
+            },
+            navigationIcon = {
+                // Bouton retour pour quitter le mode recherche
+                IconButton(onClick = {
+                    searchActive = false
+                    onSearchQueryChanged("") // On réinitialise la recherche en quittant
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.Back_to_the_list)
+                    )
+                }
+            },
+            actions = {
+                // Croix pour vider le champ de texte rapidement
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { onSearchQueryChanged("") }) {
+                        Icon(Icons.Default.Close, contentDescription = "Effacer")
+                    }
+                }
+            }
+        )
+
+    } else {
+
+        TopAppBar(
+            title = { Text(text = stringResource(R.string.event_list_title)) },
+            actions = {
+                IconButton(onClick = { searchActive = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.search_placeholder)
+                    )
+                }
+                IconButton(
+                    onClick = {
+                    val newSortOrder = when (sortOrder) {
+                        SortOrder.BY_DATE_ASC -> SortOrder.BY_DATE_DESC
+                        SortOrder.BY_DATE_DESC -> SortOrder.BY_DATE_ASC
+                    }
+                    onSortOrderChanged(newSortOrder)
+                    }
+                ) {
+                    Icon(
+                        imageVector = when (sortOrder){
+                            SortOrder.BY_DATE_ASC -> Icons.Default.KeyboardArrowUp
+                            SortOrder.BY_DATE_DESC -> Icons.Default.KeyboardArrowDown
+                            //SortOrder.BY_CATEGORY -> Icons.Default.UnfoldMore
+                        },
+                        contentDescription = stringResource(R.string.sort_by_date),
+                        tint = if (sortOrder == SortOrder.BY_DATE_ASC)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        )
+    }
 }
 
 // ---------------------------------------------------------------------------

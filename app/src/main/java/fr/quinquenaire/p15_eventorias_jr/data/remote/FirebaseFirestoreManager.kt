@@ -45,7 +45,7 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             }
         awaitClose { listener.remove() }
     }
-
+// if the database grows
     fun searchEvents(query: String): Flow<List<Event>> = callbackFlow {
         val listener = firestore.collection("events")
             .orderBy("title")

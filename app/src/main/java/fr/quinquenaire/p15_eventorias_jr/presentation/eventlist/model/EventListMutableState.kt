@@ -7,5 +7,6 @@ class EventListMutableState (
     val isLoading: Boolean = false,
     val error: String? = null,
     val selectedCategory: String? = null,
-    val sortOrder: SortOrder = SortOrder.BY_DATE
+    val sortOrder: SortOrder = SortOrder.BY_DATE_ASC,
+    val searchQuery: String = ""
 )
