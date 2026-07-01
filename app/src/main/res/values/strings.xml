@@ -26,7 +26,7 @@
     <string name="already_have_account">Already have an account?</string>
 
     <!-- Events -->
-    <string name="events">Events</string>
+    <string name="event_list_title">Events</string>
     <string name="event_list">Event List</string>
     <string name="event_details">Event Details</string>
     <string name="create_event">Create Event</string>
@@ -41,6 +41,9 @@
     <string name="sort_by_date">Date</string>
     <string name="sort_by_category">Category</string>
     <string name="no_events">No events found</string>
+    <string name="filter_all">All</string>
+    <string name="event_list_empty">No events available</string>
+
 
     <!-- Profile -->
     <string name="profile">Profile</string>

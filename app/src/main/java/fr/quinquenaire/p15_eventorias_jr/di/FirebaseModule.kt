@@ -8,6 +8,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import fr.quinquenaire.p15_eventorias_jr.android.data.remote.firebase.FirebaseStorageManager
+import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
 import javax.inject.Singleton
 
 @Module
@@ -36,5 +38,21 @@ object FirebaseModule {
     @Provides
     fun provideFirebaseMessaging(): FirebaseMessaging {
         return FirebaseMessaging.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestoreManager(
+        firestore: FirebaseFirestore
+    ): FirebaseFirestoreManager {
+        return FirebaseFirestoreManager(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorageManager(
+        storage: FirebaseStorage
+    ): FirebaseStorageManager {
+        return FirebaseStorageManager(storage)
     }
 }
