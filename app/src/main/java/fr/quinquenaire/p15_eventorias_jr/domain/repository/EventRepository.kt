@@ -1,6 +1,6 @@
 package fr.quinquenaire.p15_eventorias_jr.domain.repository
 
-import fr.quinquenaire.p15_eventorias_jr.domain.Event
+import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import kotlinx.coroutines.flow.Flow
 import android.net.Uri
 

@@ -1,6 +1,6 @@
 package fr.quinquenaire.p15_eventorias_jr.domain.usecase
 
-import fr.quinquenaire.p15_eventorias_jr.domain.Event
+import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.EventRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

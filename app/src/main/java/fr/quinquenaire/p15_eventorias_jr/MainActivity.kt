@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.EventListScreen
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListScreen
 import fr.quinquenaire.p15_eventorias_jr.presentation.theme.P15_eventorias_jrTheme
 
 @AndroidEntryPoint

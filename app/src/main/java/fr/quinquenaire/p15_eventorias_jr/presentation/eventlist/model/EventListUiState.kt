@@ -1,7 +1,7 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.event.model
+package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model
 
 import androidx.compose.runtime.Immutable
-import fr.quinquenaire.p15_eventorias_jr.domain.Event
+import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 
 @Immutable
 class EventListUiState(
@@ -23,7 +23,7 @@ fun Event.toUi(): EventListUiState = EventListUiState(
     name = name,
     date = date,
     time = time,
-    category = category,
+    category = this.category,
     imageUrl = imageUrl,
     locationName = locationName,
     organizerId = organizerId,

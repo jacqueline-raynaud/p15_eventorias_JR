@@ -1,14 +1,13 @@
 package fr.quinquenaire.p15_eventorias_jr.data.remote
 
 import com.google.firebase.firestore.FirebaseFirestore
-import fr.quinquenaire.p15_eventorias_jr.domain.Event
-import fr.quinquenaire.p15_eventorias_jr.domain.UserProfile
+import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
+import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import android.util.Log
-import dagger.Provides
 
 
 class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {

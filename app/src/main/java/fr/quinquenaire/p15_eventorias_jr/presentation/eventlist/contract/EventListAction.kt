@@ -1,6 +1,6 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.event.viewmodel.contract
+package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract
 
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.SortOrder
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.SortOrder
 
 interface EventListAction {
     data object LoadEvents : EventListAction

@@ -3,7 +3,7 @@ package fr.quinquenaire.p15_eventorias_jr.data.repository
 import android.net.Uri
 import fr.quinquenaire.p15_eventorias_jr.android.data.remote.firebase.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
-import fr.quinquenaire.p15_eventorias_jr.domain.Event
+import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.EventRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

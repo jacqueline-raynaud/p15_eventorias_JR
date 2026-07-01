@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.domain
+package fr.quinquenaire.p15_eventorias_jr.domain.model
 
 import com.google.firebase.firestore.GeoPoint
 

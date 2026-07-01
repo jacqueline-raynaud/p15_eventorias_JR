@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.event
+package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,11 +23,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import fr.quinquenaire.p15_eventorias_jr.R
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.model.EventListUiState
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.viewmodel.contract.EventListAction
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.viewmodel.contract.EventListEffect
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.SortOrder
+import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListUiState
 import kotlinx.coroutines.flow.collectLatest
+
 
 // ---------------------------------------------------------------------------
 // Screen entry point
@@ -149,7 +150,7 @@ private fun EventListTopBar(
 // Filtre catégories (chips horizontaux)
 // ---------------------------------------------------------------------------
 
-private val CATEGORIES = listOf("Musique", "Sport", "Canicule", "Art", "Famille")
+private val CATEGORIES = EventCategory.entries
 
 @Composable
 private fun CategoryFilterBar(
@@ -171,13 +172,9 @@ private fun CategoryFilterBar(
         // Chips catégories
         items(CATEGORIES) { category ->
             FilterChip(
-                selected = selectedCategory == category,
-                onClick = {
-                    onCategorySelected(
-                        if (selectedCategory == category) null else category
-                    )
-                },
-                label = { Text(text = category) }
+                selected = selectedCategory == category.label,
+                onClick = { onCategorySelected(category.label) },
+                label = { Text(text = category.label) }
             )
         }
     }

@@ -1,14 +1,14 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.event
+package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.GetEventsUseCase
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.model.EventListMutableState
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.model.EventListUiState
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.model.toUi
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.viewmodel.contract.EventListAction
-import fr.quinquenaire.p15_eventorias_jr.presentation.event.viewmodel.contract.EventListEffect
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListMutableState
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListUiState
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.toUi
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
