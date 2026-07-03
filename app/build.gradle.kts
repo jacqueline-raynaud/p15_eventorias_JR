@@ -21,7 +21,7 @@ android {
         versionName = "1.0.0"
 
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "fr.quinquenaire.p15_eventorias_jr.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

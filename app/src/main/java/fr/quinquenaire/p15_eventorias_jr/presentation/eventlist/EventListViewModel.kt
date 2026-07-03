@@ -69,10 +69,11 @@ class EventListViewModel @Inject constructor(
                             || event.locationName.contains(query, ignoreCase = true)}
                 .let { list ->
                     when (sortOrder) {
+                        SortOrder.DEFAULT -> list
                         SortOrder.BY_DATE_ASC  -> list.sortedBy { it.date }
                         SortOrder.BY_DATE_DESC-> list.sortedByDescending { it.date }
+                        //SortOrder.BY_CATEGORY -> list.sortedBy { it.category }
 
-                    //SortOrder.BY_CATEGORY -> list.sortedBy { it.category }
                     }
                 },
             isLoading = false,
