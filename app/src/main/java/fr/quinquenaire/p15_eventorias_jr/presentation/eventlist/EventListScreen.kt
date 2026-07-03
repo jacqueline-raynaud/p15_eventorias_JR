@@ -58,6 +58,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,7 +67,9 @@ import fr.quinquenaire.p15_eventorias_jr.R
 import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListMutableState
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListUiState
+import fr.quinquenaire.p15_eventorias_jr.presentation.theme.P15_eventorias_jrTheme
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -99,24 +102,43 @@ fun EventListScreen(
             }
         }
     }
+    // Délégation à la partie stateless : état + un seul point d'entrée d'actions
+    EventListContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onAction = viewModel::handleAction,
+        modifier = modifier
+    )
+}
 
-    Scaffold(
+// ---------------------------------------------------------------------------
+// content - Stateless
+// ---------------------------------------------------------------------------
+
+@Composable
+fun EventListContent(
+    uiState: EventListMutableState,
+    snackbarHostState: SnackbarHostState,
+    onAction: (EventListAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
+Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             EventListTopBar(
                 sortOrder = uiState.sortOrder,
                 onSortOrderChanged = { order ->
-                    viewModel.handleAction(EventListAction.ChangeSortOrder(order))
+                    onAction(EventListAction.ChangeSortOrder(order))
                 },
                 searchQuery = uiState.searchQuery,
                 onSearchQueryChanged = { query ->
-                    viewModel.handleAction(EventListAction.OnSearchQueryChanged(query))
+                    onAction(EventListAction.OnSearchQueryChanged(query))
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.handleAction(EventListAction.OnCreateEventClick) }
+                onClick = { onAction(EventListAction.OnCreateEventClick) }
 
             ) {
                 Icon(
@@ -134,7 +156,7 @@ fun EventListScreen(
             CategoryFilterBar(
                 selectedCategory = uiState.selectedCategory,
                 onCategorySelected = { category ->
-                    viewModel.handleAction(EventListAction.FilterByCategory(category))
+                    onAction(EventListAction.FilterByCategory(category))
                 }
             )
 
@@ -147,14 +169,14 @@ fun EventListScreen(
                     uiState.isLoading -> LoadingContent()
                     uiState.error != null -> ErrorContent(
                         message = uiState.error!!,
-                        onRetry = { viewModel.handleAction(EventListAction.LoadEvents) }
+                        onRetry = { onAction(EventListAction.LoadEvents) }
                     )
 
                     uiState.events.isEmpty() -> EmptyContent()
                     else -> EventList(
                         events = uiState.events,
                         onEventClick = { eventId ->
-                            viewModel.handleAction(EventListAction.OnEventClick(eventId))
+                            onAction(EventListAction.OnEventClick(eventId))
                         }
                     )
                 }
@@ -463,6 +485,54 @@ private fun CategoryBadge(category: String) {
             text = category,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Preview
+// ---------------------------------------------------------------------------
+@Preview(showBackground = true)
+@Composable
+private fun EventListContentPreview() {
+    P15_eventorias_jrTheme {
+        EventListContent(
+            uiState = EventListMutableState(
+                events = listOf(
+                    EventListUiState(
+                        id = "1", name = "Soirée Jazz", date = "2025-06-15",
+                        time = "20:00", category = "Musique", imageUrl = "",
+                        locationName = "Lyon", organizerId = "u1",
+                        latitude = null, longitude = null
+                    )
+                )
+            ),
+            snackbarHostState = SnackbarHostState(),
+            onAction = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EventListContentLoadingPreview() {
+    P15_eventorias_jrTheme {
+        EventListContent(
+            uiState = EventListMutableState(isLoading = true),
+            snackbarHostState = SnackbarHostState(),
+            onAction = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EventListContentErrorPreview() {
+    P15_eventorias_jrTheme {
+        EventListContent(
+            uiState = EventListMutableState(error = "Erreur réseau"),
+            snackbarHostState = SnackbarHostState(),
+            onAction = {}
         )
     }
 }
