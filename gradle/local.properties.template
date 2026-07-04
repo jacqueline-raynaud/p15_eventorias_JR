@@ -7,7 +7,7 @@ sdk.dir=/path/to/Android/sdk
 
 # Google Maps Static API Key
 # Get from: https://console.cloud.google.com/
-google.maps.key=YOUR_GOOGLE_MAPS_API_KEY_HERE
+google.maps.key=The key
 
 # Firebase Database URL (from Firebase Console)
 firebase.database.url=https://hexagonalgamesjr.firebaseio.com

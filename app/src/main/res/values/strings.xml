@@ -43,6 +43,11 @@
     <string name="no_events">No events found</string>
     <string name="filter_all">All</string>
     <string name="event_list_empty">No events available</string>
+    <string name ="event_detail_menu">Event Detail Menu</string>
+    <string name="edit_event">Edit Event</string>
+    <string name="delete_event">Delete Event</string>
+    <string name="organizer_avatar">Organiser avatar</string>
+    <string name="event_map">Event map</string>
 
 
     <!-- Profile -->
@@ -81,4 +86,6 @@
     <string name="content_description_fab">Create new event button</string>
     <string name="search_placeholder">Type your text here</string>
     <string name="Back_to_the_list">Back to the list</string>
+
+
 </resources>
