@@ -1,7 +1,7 @@
 package fr.quinquenaire.p15_eventorias_jr
 
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
-import fr.quinquenaire.p15_eventorias_jr.domain.usecase.GetEventsUseCase
+import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.GetEventsUseCase
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListViewModel
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
@@ -15,8 +15,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
 import app.cash.turbine.test
 

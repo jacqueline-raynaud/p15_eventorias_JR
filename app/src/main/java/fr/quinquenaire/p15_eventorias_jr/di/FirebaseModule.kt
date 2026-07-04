@@ -8,8 +8,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import fr.quinquenaire.p15_eventorias_jr.android.data.remote.firebase.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
+import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import javax.inject.Singleton
 
 @Module

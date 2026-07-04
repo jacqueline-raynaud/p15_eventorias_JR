@@ -80,7 +80,7 @@ fun EventoriasNavHost(
         // Profil utilisateur
         composable(EventoriasDestinations.UserProfile.route) {
             UserProfileScreen(
-                onNavigateBack = { navController.popBackStack() }
+
             )
         }
     }

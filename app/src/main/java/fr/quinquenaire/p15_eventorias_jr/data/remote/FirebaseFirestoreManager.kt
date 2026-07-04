@@ -128,18 +128,32 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         }
     }
 
-    // Users Collection
-    fun getUserProfile(userId: String): Flow<UserProfile?> = callbackFlow {
-        val listener = firestore.collection("users").document(userId)
+    // --- User Profile ---
+
+    fun getUserProfile(uid: String): Flow<UserProfile?> = callbackFlow {
+        val listener = firestore.collection("users").document(uid)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    trySend(null)
+                    Log.e("EventoriasApp", "Error getting user profile", error)
+                    close(error)
                     return@addSnapshotListener
                 }
-                val user = snapshot?.toObject(UserProfile::class.java)?.copy(uid = snapshot.id)
-                trySend(user)
+                trySend(snapshot?.toObject(UserProfile::class.java))
             }
         awaitClose { listener.remove() }
+    }
+
+    suspend fun createUserProfileIfMissing(profile: UserProfile) {
+        try {
+            val docRef = firestore.collection("users").document(profile.uid)
+            val snapshot = docRef.get().await()
+            if (!snapshot.exists()) {
+                docRef.set(profile).await()
+            }
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error creating user profile", e)
+            throw e
+        }
     }
 
     suspend fun createUserProfile(user: UserProfile) {
@@ -152,7 +166,7 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         }
     }
 
-    suspend fun updateUserProfile(user: UserProfile) {
+    /*suspend fun updateUserProfile(user: UserProfile) {
         try {
             firestore.collection("users").document(user.uid)
                 .update(
@@ -168,11 +182,29 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             Log.e("EventoriasApp", "Error updating user profile", e)
             throw e
         }
+    }*/
+
+
+    suspend fun updateUserProfile(profile: UserProfile) {
+        try {
+            val updateMap = mapOf(
+                "firstName" to profile.firstName,
+                "lastName" to profile.lastName,
+                "avatarUrl" to profile.avatarUrl
+            )
+            firestore.collection("users")
+                .document(profile.uid)
+                .update(updateMap)
+                .await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error updating user profile", e)
+            throw e
+        }
     }
 
-    suspend fun toggleNotifications(userId: String, enabled: Boolean) {
+    suspend fun toggleNotifications(uid: String, enabled: Boolean) {
         try {
-            firestore.collection("users").document(userId)
+            firestore.collection("users").document(uid)
                 .update(
                     mapOf(
                         "notificationsEnabled" to enabled,
@@ -183,6 +215,18 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         } catch (e: Exception) {
             //Log.e("EventoriasApp", e, "Error toggling notifications")
             Log.e("EventoriasApp", "Error toggling notifications", e)
+            throw e
+        }
+    }
+
+    suspend fun updateNotificationSetting(uid: String, enabled: Boolean) {
+        try {
+            firestore.collection("users")
+                .document(uid)
+                .update("notificationEnabled", enabled)
+                .await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error updating notification setting", e)
             throw e
         }
     }

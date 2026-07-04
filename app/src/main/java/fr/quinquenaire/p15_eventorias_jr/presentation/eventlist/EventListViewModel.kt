@@ -3,7 +3,7 @@ package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.quinquenaire.p15_eventorias_jr.domain.usecase.GetEventsUseCase
+import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.GetEventsUseCase
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListMutableState
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListUiState
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.toUi

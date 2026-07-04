@@ -46,10 +46,11 @@
 
 
     <!-- Profile -->
-    <string name="profile">Profile</string>
+    <string name="user_profile_title">Profile</string>
     <string name="user_profile">User Profile</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
+    <string name="user_name">Name</string>"
     <string name="enable_notifications">Enable Notifications</string>
     <string name="notifications">Notifications</string>
     <string name="push_notifications">Push Notifications</string>

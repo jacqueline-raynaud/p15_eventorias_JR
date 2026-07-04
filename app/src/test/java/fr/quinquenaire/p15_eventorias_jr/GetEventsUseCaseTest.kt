@@ -2,7 +2,7 @@ package fr.quinquenaire.p15_eventorias_jr
 
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.EventRepository
-import fr.quinquenaire.p15_eventorias_jr.domain.usecase.GetEventsUseCase
+import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.GetEventsUseCase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe

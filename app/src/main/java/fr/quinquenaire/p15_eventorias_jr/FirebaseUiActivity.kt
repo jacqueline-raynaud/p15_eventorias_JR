@@ -4,12 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
+import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
+import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.CreateUserProfileUseCase
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FirebaseUiActivity : AppCompatActivity() {
+    @Inject
+    lateinit var createUserProfileUseCase: CreateUserProfileUseCase
 
     // create launcher for sign-in
     private val signInLauncher = registerForActivityResult(
@@ -37,24 +46,42 @@ class FirebaseUiActivity : AppCompatActivity() {
             AuthUI.IdpConfig.GoogleBuilder().build(),
         )
         val signInIntent = AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .setLogo(R.drawable.logo_eventorias)
-                .setTheme(R.style.Theme_P15_eventorias_jr).build()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .setLogo(R.drawable.logo_eventorias)
+            .setTheme(R.style.Theme_P15_eventorias_jr).build()
         signInLauncher.launch(signInIntent)
     }
 
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         val response = result.idpResponse
         if (result.resultCode == RESULT_OK) {
-            // Successfully signed in
             val user = FirebaseAuth.getInstance().currentUser
 
-            Log.d("FirebaseUiActivity", "UserProfile signed in: $user")
-            startActivity(Intent(this, MainActivity::class.java))
+            if (user != null) {
+                // Création du document users si 1re connexion.
+                // lifecycleScope : coroutine liée au cycle de vie de l'activity.
+                lifecycleScope.launch {
+                    // displayName de Firebase Auth = "Prénom Nom" (Google) ou
+                    // le nom saisi (email). On le découpe simplement.
+                    val names = user.displayName?.split(" ") ?: emptyList()
+                    createUserProfileUseCase(
+                        UserProfile(
+                            uid = user.uid,
+                            firstName = names.firstOrNull() ?: "",
+                            lastName = names.drop(1).joinToString(" "),
+                            email = user.email ?: "",
+                            avatarUrl = user.photoUrl?.toString() ?: "",
+                            notificationEnabled = false
+                        )
+                    )
+                    startActivity(Intent(this@FirebaseUiActivity, MainActivity::class.java))
+                    finish()
+                }
+            }
         } else {
             if (response == null) {
-                finish()
+                finish()   // utilisateur a annulé → on ferme
             } else {
                 val errorCode = response.error?.errorCode
                 Log.e("FirebaseUI", "Sign-in error: $errorCode")
@@ -66,7 +93,8 @@ class FirebaseUiActivity : AppCompatActivity() {
         AuthUI.getInstance()
             .signOut(this)
             .addOnCompleteListener {
-            // ...
-        }
+                // ...
+            }
     }
 }
+
