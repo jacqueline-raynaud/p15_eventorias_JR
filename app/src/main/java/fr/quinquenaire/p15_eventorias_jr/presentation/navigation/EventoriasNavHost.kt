@@ -27,8 +27,6 @@ fun EventoriasNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-
-
         // Liste des événements
         composable(EventoriasDestinations.EventList.route) {
             EventListScreen(
@@ -47,10 +45,8 @@ fun EventoriasNavHost(
         composable(
             route = EventoriasDestinations.EventDetail.route,
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+        ) {
             EventDetailScreen(
-                eventId = eventId,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToEdit = { id ->
                     navController.navigate(EventoriasDestinations.EventEdit.createRoute(id))
@@ -58,14 +54,14 @@ fun EventoriasNavHost(
             )
         }
 
-        // Création d'un événement
+// Création d'un événement
         composable(EventoriasDestinations.EventCreate.route) {
             EventCreationScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
 
-        // Modification d'un événement
+// Modification d'un événement
         composable(
             route = EventoriasDestinations.EventEdit.route,
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
@@ -77,7 +73,7 @@ fun EventoriasNavHost(
             )
         }
 
-        // Profil utilisateur
+// Profil utilisateur
         composable(EventoriasDestinations.UserProfile.route) {
             UserProfileScreen(
 

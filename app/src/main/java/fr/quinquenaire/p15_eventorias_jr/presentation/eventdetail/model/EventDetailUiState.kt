@@ -3,6 +3,7 @@ package fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.model
 import androidx.compose.runtime.Immutable
 import fr.quinquenaire.p15_eventorias_jr.BuildConfig
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
+import fr.quinquenaire.p15_eventorias_jr.presentation.util.MapUrlBuilder
 
 @Immutable
 data class EventDetailUiState(
@@ -19,7 +20,6 @@ data class EventDetailUiState(
 )
 // Mapper domain → UI
 
-
 fun Event.toDetailUi(organizerAvatarUrl: String = ""): EventDetailUiState = EventDetailUiState(
     id = id,
     name = name,
@@ -30,12 +30,6 @@ fun Event.toDetailUi(organizerAvatarUrl: String = ""): EventDetailUiState = Even
     imageUrl = imageUrl,
     organizerId = organizerId,
     organizerAvatarUrl = organizerAvatarUrl,
-    staticMapUrl = buildStaticMapUrl()
+    staticMapUrl = location?.let { MapUrlBuilder.build(it.latitude, it.longitude) }.orEmpty()
 )
 
-// Construction de l'URL Google Maps Static API private
-fun Event.buildStaticMapUrl(): String {
-    val lat = location?.latitude ?: return ""
-    val lng = location?.longitude  ?: return ""
-    return "https://maps.googleapis.com/maps/api/staticmap" + "?center=$lat,$lng" + "&zoom=15" + "&size=600x300" + "&markers=color:red%7C$lat,$lng" + "&key=${BuildConfig.GOOGLE_MAPS_API_KEY}"
-}

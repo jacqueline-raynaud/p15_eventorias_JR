@@ -48,9 +48,9 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
 // if the database grows
     fun searchEvents(query: String): Flow<List<Event>> = callbackFlow {
         val listener = firestore.collection("events")
-            .orderBy("title")
+            .orderBy("name")
             .startAt(query)
-            .endAt(query + "")
+            .endAt(query + "\uf8ff")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(emptyList())
@@ -165,25 +165,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             throw e
         }
     }
-
-    /*suspend fun updateUserProfile(user: UserProfile) {
-        try {
-            firestore.collection("users").document(user.uid)
-                .update(
-                    mapOf(
-                        "firstName" to user.firstName,
-                        "lastName" to user.lastName,
-                        "avatarUrl" to user.avatarUrl,
-                    )
-                )
-                .await()
-        } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error updating user profile")
-            Log.e("EventoriasApp", "Error updating user profile", e)
-            throw e
-        }
-    }*/
-
 
     suspend fun updateUserProfile(profile: UserProfile) {
         try {

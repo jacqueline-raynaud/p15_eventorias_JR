@@ -26,8 +26,6 @@ android {
             useSupportLibrary = true
         }
 
-        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = getLocalProperty("google.maps.key")
-
         // Build Config Fields
         buildConfigField(
             "String",
@@ -134,6 +132,9 @@ dependencies {
     // kotest
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
+
+    // reseau pour ne pas dépendre de coil
+    implementation(libs.okhttp)
 }
 
 // Helper function to get local properties

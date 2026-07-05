@@ -24,11 +24,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class) @HiltViewModel class EventDetailViewModel @Inject constructor( savedStateHandle: SavedStateHandle, getEventDetailUseCase: GetEventDetailUseCase, getUserProfileUseCase: GetUserProfileUseCase ) : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
+class EventDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    getEventDetailUseCase: GetEventDetailUseCase,
+    getUserProfileUseCase: GetUserProfileUseCase
+) : ViewModel() {
 
-    // L'eventId arrive automatiquement depuis la route de navigation
-// "event_detail/{eventId}" via le SavedStateHandle — pas besoin de le
-// passer manuellement au ViewModel.
     private val eventId: String = checkNotNull(savedStateHandle["eventId"])
     val uiState: StateFlow<EventDetailMutableState> =
         getEventDetailUseCase(eventId)
