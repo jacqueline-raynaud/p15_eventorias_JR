@@ -3,6 +3,7 @@ package fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.model
 import androidx.compose.runtime.Immutable
 import fr.quinquenaire.p15_eventorias_jr.BuildConfig
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
+import fr.quinquenaire.p15_eventorias_jr.presentation.util.DateFormatters
 import fr.quinquenaire.p15_eventorias_jr.presentation.util.MapUrlBuilder
 
 @Immutable
@@ -24,8 +25,8 @@ fun Event.toDetailUi(organizerAvatarUrl: String = ""): EventDetailUiState = Even
     id = id,
     name = name,
     description = description,
-    date = date,
-    time = time,
+    date = DateFormatters.formatDate(date),
+    time = DateFormatters.formatTime(date),
     locationName = locationName,
     imageUrl = imageUrl,
     organizerId = organizerId,

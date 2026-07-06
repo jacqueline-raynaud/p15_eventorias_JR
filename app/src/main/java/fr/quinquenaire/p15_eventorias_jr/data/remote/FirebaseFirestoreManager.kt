@@ -101,7 +101,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
                 "name" to event.name,
                 "description" to event.description,
                 "date" to event.date,
-                "time" to event.time,
                 "locationName" to event.locationName,
                 "location" to event.location,
                 "category" to event.category,
