@@ -95,6 +95,17 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         }
     }
 
+    suspend fun updateEventImageUrl(eventId: String, imageUrl: String) {
+        try {
+            firestore.collection("events").document(eventId)
+                .update("imageUrl", imageUrl)
+                .await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error updating event image url", e)
+            throw e
+        }
+    }
+
     suspend fun updateEvent(event: Event) {
         try {
             val updateMap = mapOf(

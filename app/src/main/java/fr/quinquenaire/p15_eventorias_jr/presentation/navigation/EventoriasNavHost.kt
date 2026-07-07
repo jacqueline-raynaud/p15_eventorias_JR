@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.EventCreationScreen
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.CreateEventScreen
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.EventDetailScreen
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.EventEditScreen
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListScreen
@@ -56,7 +56,7 @@ fun EventoriasNavHost(
 
 // Création d'un événement
         composable(EventoriasDestinations.EventCreate.route) {
-            EventCreationScreen(
+            CreateEventScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
