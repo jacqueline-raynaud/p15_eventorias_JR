@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.eventcomponent
+package fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem

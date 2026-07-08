@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.eventcomponent
+package fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent
 
 import android.content.Context
 import android.net.Uri
