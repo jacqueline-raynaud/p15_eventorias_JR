@@ -41,6 +41,7 @@ import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.Cre
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventEffect
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.eventcomponent.CategoryField
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.eventcomponent.DateField
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.eventcomponent.ImagePickerField
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.eventcomponent.TimeField
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.model.CreateEventMutableState
 import kotlinx.coroutines.flow.collectLatest
@@ -124,6 +125,11 @@ fun CreateEventContent(
                 label = { Text(stringResource(R.string.event_name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
+            )
+            // image
+            ImagePickerField(
+                imageUri = uiState.imageUri,
+                onImageSelected = { onAction(CreateEventAction.OnImageSelected(it)) }
             )
 
             // Description

@@ -56,6 +56,10 @@ class CreateEventViewModel @Inject constructor(
             is CreateEventAction.OnSaveClick -> saveEvent()
 
             is CreateEventAction.OnBackClick -> emitEffect(CreateEventEffect.NavigateBack)
+
+            is CreateEventAction.OnImageSelected ->
+                _uiState.update { it.copy(imageUri = action.uri) }
+
         }
     }
 
