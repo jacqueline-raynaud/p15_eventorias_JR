@@ -96,6 +96,8 @@
     <string name="event_image_preview">event image preview</string>
     <string name="edit_event_title">Edit event</string>
     <string name="save_changes">Save changes</string>
+    <string name="delete_event_confirm_title">Delete event confirm</string>
+    <string name="delete_event_confirm_message">Did yout confirm delete event ?</string>
 
 
 </resources>

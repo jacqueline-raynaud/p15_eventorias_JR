@@ -21,15 +21,29 @@ class FirebaseStorageManager(private val firebaseStorage: FirebaseStorage) {
         }
     }
 
-        suspend fun deleteFile(filePath: String) {
+/*    suspend fun deleteFile(filePath: String) {
         try {
-            firebaseStorage.reference.child(filePath).delete().await()
+            firebaseStorage.reference
+                .child(filePath)
+                .delete()
+                .await()
         } catch (e: Exception) {
             //Log.e("EventoriasApp", e, "Error deleting file")
             Log.e("EventoriasApp", "Error deleting file", e)
             throw e
         }
+    }*/
+suspend fun deleteEventImage(eventId: String) {
+    try {
+        firebaseStorage.reference
+            .child("events/$eventId/image.jpg")
+            .delete()
+            .await()
+    } catch (e: Exception) {
+        // Non bloquant : un fichier orphelin dans Storage n'a pas d'impact fonctionnel
+        Log.e("EventoriasApp", "Error deleting event image", e)
     }
+}
 
     suspend fun uploadUserAvatar(uid: String, avatarUri: Uri): String {
         return try {

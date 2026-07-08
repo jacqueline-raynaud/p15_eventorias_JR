@@ -41,9 +41,9 @@ class EventRepositoryImpl @Inject constructor(
         } /*catch (e: IOException) {
             Log.e("EventoriasApp", "Geocoding failed", e)
             null    // on crée l'événement sans coordonnées plutôt que d'échouer*/
-            catch (e: Exception) {   // élargi à Exception le temps du debug
-                Log.e("EventoriasApp", "Geocoding failed", e)
-                null
+        catch (e: Exception) {   // élargi à Exception le temps du debug
+            Log.e("EventoriasApp", "Geocoding failed", e)
+            null
         }
         //Création du document puis upoload image
         val eventId = firestoreManager.createEvent(event.copy(location = location))
@@ -54,14 +54,6 @@ class EventRepositoryImpl @Inject constructor(
         }
         return eventId
     }
-    /*var eventToCreate = event
-    if (imageUri != null) {
-        val tempEventId = "temp_${System.currentTimeMillis()}"
-        val imageUrl = storageManager.uploadEventImage(tempEventId, imageUri)
-        eventToCreate = event.copy(imageUrl = imageUrl)
-    }
-    return firestoreManager.createEvent(eventToCreate)*/
-
 
     override suspend fun updateEvent(event: Event, imageUri: Uri?) {
         val location = if (event.location == null) {
@@ -84,7 +76,10 @@ class EventRepositoryImpl @Inject constructor(
         firestoreManager.updateEvent(event.copy(location = location, imageUrl = imageUrl))
     }
 
-    override suspend fun deleteEvent(eventId: String) {
-        firestoreManager.deleteEvent(eventId)
+    override suspend fun deleteEvent(eventId: String, imageUrl: String) {
+        firestoreManager.deleteEvent(eventId)          // source de vérité : le document disparaît
+        if (imageUrl.isNotBlank()) {
+            storageManager.deleteEventImage(eventId)   // best-effort, erreur déjà absorbée dans le manager
+        }
     }
 }

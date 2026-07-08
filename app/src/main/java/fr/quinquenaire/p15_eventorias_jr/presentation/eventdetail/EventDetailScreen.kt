@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -33,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -134,6 +136,23 @@ fun EventDetailContent(
                 uiState.event != null -> EventDetailBody(event = uiState.event)
             }
         }
+        if (uiState.showDeleteConfirmation) {
+            AlertDialog(
+                onDismissRequest = { onAction(EventDetailAction.OnDismissDeleteDialog) },
+                title = { Text(stringResource(R.string.delete_event_confirm_title)) },
+                text = { Text(stringResource(R.string.delete_event_confirm_message)) },
+                confirmButton = {
+                    TextButton(onClick = { onAction(EventDetailAction.OnConfirmDelete) }) {
+                        Text(stringResource(R.string.delete_event), color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { onAction(EventDetailAction.OnDismissDeleteDialog) }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -143,7 +162,11 @@ fun EventDetailContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EventDetailTopBar(title: String, onAction: (EventDetailAction) -> Unit) {
+private fun EventDetailTopBar(
+    title: String,
+    isOrganizer: Boolean,
+    onAction: (EventDetailAction) -> Unit
+) {
     var menuExpanded by remember { mutableStateOf(false) }
     TopAppBar(
         title = {
@@ -164,35 +187,37 @@ private fun EventDetailTopBar(title: String, onAction: (EventDetailAction) -> Un
         },
 
         actions = {
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = stringResource(R.string.event_detail_menu)
-                )
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false }
-            ) {
+            if (isOrganizer) {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = stringResource(R.string.event_detail_menu)
+                    )
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
 
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.edit_event)) },
-                    leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
-                    onClick = {
-                        menuExpanded = false
-                        onAction(EventDetailAction.OnEditClick)
-                    }
-                )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.edit_event)) },
+                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                        onClick = {
+                            menuExpanded = false
+                            onAction(EventDetailAction.OnEditClick)
+                        }
+                    )
 
-                DropdownMenuItem(
+                    DropdownMenuItem(
 
-                    text = { Text(stringResource(R.string.delete_event)) },
-                    leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
-                    onClick = {
-                        menuExpanded = false
-                        onAction(EventDetailAction.OnDeleteClick)
-                    }
-                )
+                        text = { Text(stringResource(R.string.delete_event)) },
+                        leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                        onClick = {
+                            menuExpanded = false
+                            onAction(EventDetailAction.OnDeleteClick)
+                        }
+                    )
+                }
             }
         }
     )
@@ -217,8 +242,10 @@ private fun EventDetailBody(event: EventDetailUiState, modifier: Modifier = Modi
             contentDescription = event.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxWidth() .aspectRatio(16f / 9f)
-                .clip(RoundedCornerShape(12.dp)) )
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f)
+                .clip(RoundedCornerShape(12.dp))
+        )
 
         // Date + heure à gauche, avatar organisateur à droite
         Row(
@@ -310,6 +337,7 @@ private fun EventDetailBody(event: EventDetailUiState, modifier: Modifier = Modi
                     .testTag("static_map")
             )
         }
+
     }
 }
 

@@ -4,5 +4,7 @@ interface EventDetailAction {
     data object OnBackClick : EventDetailAction
     data object OnEditClick : EventDetailAction
     data object OnDeleteClick : EventDetailAction
+    data object OnConfirmDelete : EventDetailAction
+    data object OnDismissDeleteDialog : EventDetailAction
     data object OnRetry : EventDetailAction
 }
