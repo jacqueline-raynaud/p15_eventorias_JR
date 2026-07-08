@@ -1,5 +1,4 @@
 package fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent
-
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,7 +36,7 @@ import java.io.File
 
 @Composable
 fun ImagePickerField(
-    imageUri: Uri?,
+    previewModel: Any?,              // Uri (nouvelle sélection) OU String (URL Storage existante)
     onImageSelected: (Uri) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -64,10 +63,10 @@ fun ImagePickerField(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Aperçu de l'image sélectionnée
-        if (imageUri != null) {
+        // Aperçu : nouvelle sélection (Uri) ou image existante (String), selon le contexte
+        if (previewModel != null) {
             AsyncImage(
-                model = imageUri,
+                model = previewModel,
                 contentDescription = stringResource(R.string.event_image_preview),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

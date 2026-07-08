@@ -10,6 +10,6 @@ interface EventRepository {
     fun searchEvents(query: String): Flow<List<Event>>
     fun getEventsByCategory(category: String): Flow<List<Event>>
     suspend fun createEvent(event: Event, imageUrl: Uri?=null):String
-    suspend fun updateEvent(event: Event)
+    suspend fun updateEvent(event: Event, imageUri: Uri? = null)
     suspend fun deleteEvent(eventId: String)
 }

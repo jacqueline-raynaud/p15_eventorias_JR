@@ -53,6 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import fr.quinquenaire.p15_eventorias_jr.R
+import fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent.ErrorContent
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailEffect
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.model.EventDetailMutableState
@@ -312,25 +313,6 @@ private fun EventDetailBody(event: EventDetailUiState, modifier: Modifier = Modi
     }
 }
 
-// ---------------------------------------------------------------------------
-// État : erreur
-// ---------------------------------------------------------------------------
-
-@Composable
-private fun ErrorContent(message: String, onRetry: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(horizontal = 32.dp)
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.error
-        )
-        Button (onClick = onRetry) { Text(text = stringResource(R.string.retry)) }
-    }
-}
 
 // ---------------------------------------------------------------------------
 // Previews

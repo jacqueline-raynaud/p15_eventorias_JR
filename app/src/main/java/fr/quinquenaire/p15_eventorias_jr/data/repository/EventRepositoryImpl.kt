@@ -63,8 +63,25 @@ class EventRepositoryImpl @Inject constructor(
     return firestoreManager.createEvent(eventToCreate)*/
 
 
-    override suspend fun updateEvent(event: Event) {
-        firestoreManager.updateEvent(event)
+    override suspend fun updateEvent(event: Event, imageUri: Uri?) {
+        val location = if (event.location == null) {
+            try {
+                geocoderManager.geocode(event.locationName)
+            } catch (e: Exception) {
+                Log.e("EventoriasApp", "Geocoding failed on update", e)
+                null
+            }
+        } else {
+            event.location
+        }
+
+        val imageUrl = if (imageUri != null) {
+            storageManager.uploadEventImage(event.id, imageUri)
+        } else {
+            event.imageUrl
+        }
+
+        firestoreManager.updateEvent(event.copy(location = location, imageUrl = imageUrl))
     }
 
     override suspend fun deleteEvent(eventId: String) {

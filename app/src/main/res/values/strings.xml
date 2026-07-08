@@ -94,6 +94,8 @@
     <string name="event_address">Adresse of Event</string>
     <string name="pick_from_gallery">pick image from gallery</string>
     <string name="event_image_preview">event image preview</string>
+    <string name="edit_event_title">Edit event</string>
+    <string name="save_changes">Save changes</string>
 
 
 </resources>

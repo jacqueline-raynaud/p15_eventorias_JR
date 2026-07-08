@@ -128,7 +128,7 @@ fun CreateEventContent(
             )
             // image
             ImagePickerField(
-                imageUri = uiState.imageUri,
+                previewModel = uiState.imageUri,
                 onImageSelected = { onAction(CreateEventAction.OnImageSelected(it)) }
             )
 

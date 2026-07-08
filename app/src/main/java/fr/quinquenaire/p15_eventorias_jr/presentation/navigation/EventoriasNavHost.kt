@@ -65,10 +65,8 @@ fun EventoriasNavHost(
         composable(
             route = EventoriasDestinations.EventEdit.route,
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+        ) {
             EventEditScreen(
-                eventId = eventId,
                 onNavigateBack = { navController.popBackStack() }
             )
         }
