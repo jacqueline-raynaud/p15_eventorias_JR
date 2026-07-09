@@ -11,7 +11,6 @@ class SyncNotificationSubscriptionUseCase @Inject constructor(
     suspend operator fun invoke() {
         val uid = userProfileRepository.getCurrentUserId() ?: return
         val profile = userProfileRepository.getUserProfile(uid).first() ?: return
-        Log.d("EventoriasApp-jr", "SyncNotificationSubscriptionUseCase: $profile")
         userProfileRepository.syncNotificationSubscription(profile.notificationEnabled)
     }
 }

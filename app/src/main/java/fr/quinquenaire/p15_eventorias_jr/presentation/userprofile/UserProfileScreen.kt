@@ -160,7 +160,6 @@ fun UserProfileContent(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            Log.d("eventorias_jr", "Clic bouton confirmation reçu")
                             onAction(UserProfileAction.OnConfirmDeleteAccount) },
                         enabled = !uiState.isDeletingAccount
                     ) {

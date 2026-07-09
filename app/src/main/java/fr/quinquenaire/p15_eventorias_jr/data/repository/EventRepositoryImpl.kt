@@ -37,7 +37,7 @@ class EventRepositoryImpl @Inject constructor(
         // Géocodage de l'adresse
         val location = try {
             geocoderManager.geocode(event.locationName)
-                .also { Log.d("EventoriasApp", "Geocoded '${event.locationName}' -> $it") }
+                //.also { Log.d("EventoriasApp", "Geocoded '${event.locationName}' -> $it") }
         } /*catch (e: IOException) {
             Log.e("EventoriasApp", "Geocoding failed", e)
             null    // on crée l'événement sans coordonnées plutôt que d'échouer*/

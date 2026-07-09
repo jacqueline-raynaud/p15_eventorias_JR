@@ -12,7 +12,6 @@ import fr.quinquenaire.p15_eventorias_jr.R
 class EventoriasMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d("EventoriasApp", "Message received: ${remoteMessage.data}")
 
         // Handle notification
         val title = remoteMessage.notification?.title ?: "Eventorias"
@@ -22,7 +21,6 @@ class EventoriasMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        Log.d("EventoriasApp", "New FCM token: $token")
         // Send token to your backend server if needed
     }
 
