@@ -17,6 +17,9 @@ interface UserProfileRepository {
     /** Met à jour l'activation des notifications */
     suspend fun updateNotificationSetting(uid: String, enabled: Boolean)
 
+    // resynchronise la notification par rapport à l'utilisateur connecté
+    suspend fun syncNotificationSubscription(enabled: Boolean)
+
     /** met à jour le profil utilisateur */
     suspend fun updateUserProfile(profile: UserProfile)
 

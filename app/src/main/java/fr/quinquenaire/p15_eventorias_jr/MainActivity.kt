@@ -10,20 +10,34 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.SyncNotificationSubscriptionUseCase
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListScreen
 import fr.quinquenaire.p15_eventorias_jr.presentation.navigation.EventoriasBottomBar
 import fr.quinquenaire.p15_eventorias_jr.presentation.navigation.EventoriasDestinations
 import fr.quinquenaire.p15_eventorias_jr.presentation.navigation.EventoriasNavHost
 import fr.quinquenaire.p15_eventorias_jr.presentation.theme.P15_eventorias_jrTheme
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var syncNotificationSubscriptionUseCase: SyncNotificationSubscriptionUseCase
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            syncNotificationSubscriptionUseCase()
+        }
+
         setContent {
             P15_eventorias_jrTheme {
                 val navController = rememberNavController()

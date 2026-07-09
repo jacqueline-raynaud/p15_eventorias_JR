@@ -34,11 +34,9 @@ object FirebaseModule {
         return FirebaseStorage.getInstance()
     }
 
-    @Singleton
     @Provides
-    fun provideFirebaseMessaging(): FirebaseMessaging {
-        return FirebaseMessaging.getInstance()
-    }
+    @Singleton
+    fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 
     @Provides
     @Singleton
