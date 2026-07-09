@@ -2,6 +2,7 @@ package fr.quinquenaire.p15_eventorias_jr.data.repository
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseAuthManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
 import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
@@ -12,7 +13,8 @@ import javax.inject.Inject
 class UserProfileRepositoryImpl @Inject constructor(
     private val firestoreManager: FirebaseFirestoreManager,
     private val storageManager: FirebaseStorageManager,
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val firebaseAuthManager: FirebaseAuthManager
 ) : UserProfileRepository {
 
     override fun getUserProfile(uid: String): Flow<UserProfile?> {
@@ -37,5 +39,13 @@ class UserProfileRepositoryImpl @Inject constructor(
 
     override suspend fun uploadUserAvatar(uid: String, avatarUri: Uri): String {
         return storageManager.uploadUserAvatar(uid, avatarUri)
+    }
+
+    override suspend fun deleteProfileData(uid: String, avatarUrl: String) {
+        storageManager.deleteAvatarByUrl(avatarUrl)
+        firestoreManager.deleteUserProfile(uid)
+    }
+    override suspend fun deleteAuthAccount() {
+        firebaseAuthManager.deleteCurrentUserAccount()
     }
 }

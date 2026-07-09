@@ -21,18 +21,6 @@ class FirebaseStorageManager(private val firebaseStorage: FirebaseStorage) {
         }
     }
 
-/*    suspend fun deleteFile(filePath: String) {
-        try {
-            firebaseStorage.reference
-                .child(filePath)
-                .delete()
-                .await()
-        } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error deleting file")
-            Log.e("EventoriasApp", "Error deleting file", e)
-            throw e
-        }
-    }*/
 suspend fun deleteEventImage(eventId: String) {
     try {
         firebaseStorage.reference
@@ -55,6 +43,20 @@ suspend fun deleteEventImage(eventId: String) {
             //Log.e("EventoriasApp", e, "Error uploading UserProfile avatar")
             Log.e("EventoriasApp", "Error uploading UserProfile avatar", e)
             throw e
+        }
+    }
+
+    suspend fun deleteAvatarByUrl(avatarUrl: String) {
+        if (avatarUrl.isBlank()) return
+        // Si l'utilisateur ne s'est jamais mis d'avatar personnalisé, avatarUrl
+        // peut être la photo de son compte Google (user.photoUrl) — une URL externe,
+        // pas un fichier dans ton bucket Storage. Rien à supprimer dans ce cas.
+        if (!avatarUrl.contains("firebasestorage")) return
+
+        try {
+            firebaseStorage.getReferenceFromUrl(avatarUrl).delete().await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error deleting avatar", e)
         }
     }
 

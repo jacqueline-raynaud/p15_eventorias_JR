@@ -88,13 +88,5 @@ class FirebaseUiActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun signOut() {
-        AuthUI.getInstance()
-            .signOut(this)
-            .addOnCompleteListener {
-                // ...
-            }
-    }
 }
 

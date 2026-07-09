@@ -98,6 +98,9 @@
     <string name="save_changes">Save changes</string>
     <string name="delete_event_confirm_title">Delete event confirm</string>
     <string name="delete_event_confirm_message">Did yout confirm delete event ?</string>
+    <string name="delete_account_confirm_title">Delete account on Eventorias</string>
+    <string name="delete_account_confirm_message">Delete account is irreversible</string>
+    <string name="delete_account">Delete account</string>
 
 
 </resources>

@@ -82,4 +82,8 @@ class EventRepositoryImpl @Inject constructor(
             storageManager.deleteEventImage(eventId)   // best-effort, erreur déjà absorbée dans le manager
         }
     }
+
+    override suspend fun anonymizeOrganizerEvents(uid: String) {
+        firestoreManager.anonymizeOrganizerEvents(uid)
+    }
 }

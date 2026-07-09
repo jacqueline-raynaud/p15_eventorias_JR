@@ -221,4 +221,38 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             throw e
         }
     }
+
+    companion object {
+        const val ANONYMOUS_ORGANIZER_ID = "utilisateur_supprime"
+    }
+
+    suspend fun anonymizeOrganizerEvents(uid: String) {
+        try {
+            val snapshot = firestore.collection("events")
+                .whereEqualTo("organizerId", uid)
+                .get()
+                .await()
+            Log.e("EventoriasApp", "anonymizeOrganizerEvents: $snapshot")
+
+            if (snapshot.isEmpty) return
+
+            val batch = firestore.batch()
+            snapshot.documents.forEach { doc ->
+                batch.update(doc.reference, "organizerId", ANONYMOUS_ORGANIZER_ID)
+            }
+            batch.commit().await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error anonymizing events", e)
+            throw e
+        }
+    }
+
+    suspend fun deleteUserProfile(uid: String) {
+        try {
+            firestore.collection("users").document(uid).delete().await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error deleting user profile", e)
+            throw e
+        }
+    }
 }

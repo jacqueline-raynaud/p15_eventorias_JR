@@ -3,6 +3,7 @@ package fr.quinquenaire.p15_eventorias_jr.presentation.userprofile
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,10 +19,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,6 +39,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -145,6 +152,35 @@ fun UserProfileContent(
                 )
             }
         }
+        if (uiState.showDeleteAccountConfirmation) {
+            AlertDialog(
+                onDismissRequest = { onAction(UserProfileAction.OnDismissDeleteAccountDialog) },
+                title = { Text(stringResource(R.string.delete_account_confirm_title)) },
+                text = { Text(stringResource(R.string.delete_account_confirm_message)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            Log.d("eventorias_jr", "Clic bouton confirmation reçu")
+                            onAction(UserProfileAction.OnConfirmDeleteAccount) },
+                        enabled = !uiState.isDeletingAccount
+                    ) {
+                        if (uiState.isDeletingAccount) {
+                            Log.e("eventorias_jr", "isDeletingAccount = true")
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        } else {
+                            Log.e("eventorias_jr", "isDeletingAccount = false")
+                            Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { onAction(UserProfileAction.OnDismissDeleteAccountDialog) },
+                        enabled = !uiState.isDeletingAccount
+                    ) { Text(stringResource(R.string.cancel)) }
+                }
+            )
+        }
     }
 
 }
@@ -171,9 +207,11 @@ private fun UserProfileBody(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
+
     ) {
         Box(contentAlignment = Alignment.BottomEnd) {
             AsyncImage(
@@ -298,6 +336,21 @@ private fun UserProfileBody(
         ) {
             Text(stringResource(R.string.sign_out))
         }
+        Spacer(modifier = Modifier.height(24.dp))
+        // suppression compte
+        Button (
+            onClick = { onAction(UserProfileAction.OnDeleteAccountClick) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("delete_account_button")
+        ) {
+            Text(stringResource(R.string.delete_account))
+        }
+
     }
 }
 // ---------------------------------------------------------------------------

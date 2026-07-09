@@ -11,4 +11,8 @@ interface UserProfileAction {
     data class OnAvatarSelected(val uri: Uri) : UserProfileAction
     data object OnSaveClick : UserProfileAction
     data object OnCancelEdit : UserProfileAction
+    // suppression de compte
+    data object OnDeleteAccountClick : UserProfileAction
+    data object OnConfirmDeleteAccount : UserProfileAction
+    data object OnDismissDeleteAccountDialog : UserProfileAction
 }

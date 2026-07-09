@@ -10,7 +10,11 @@ data class UserProfileMutableState(
     val editedFirstName: String? = null,
     val editedLastName: String? = null,
     val editedAvatarUri: Uri? = null,
-    val isSaving: Boolean = false
+    val isSaving: Boolean = false,
+    // suppression de compte
+    val showDeleteAccountConfirmation: Boolean = false,
+    val isDeletingAccount: Boolean = false
+
 )
 {
 

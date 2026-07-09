@@ -12,4 +12,5 @@ interface EventRepository {
     suspend fun createEvent(event: Event, imageUrl: Uri?=null):String
     suspend fun updateEvent(event: Event, imageUri: Uri? = null)
     suspend fun deleteEvent(eventId: String, imageUrl: String)
+    suspend fun anonymizeOrganizerEvents(uid: String)
 }

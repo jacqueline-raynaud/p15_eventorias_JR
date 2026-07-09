@@ -116,7 +116,10 @@ fun EventDetailContent(
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = { EventDetailTopBar(title = uiState.event?.name ?: "", onAction = onAction) },
+        topBar = { EventDetailTopBar(
+            title = uiState.event?.name ?: "",
+            isOrganizer = uiState.isOrganizer, // à vérifier
+            onAction = onAction) },
         modifier = modifier
     ) { innerPadding ->
         Box(
