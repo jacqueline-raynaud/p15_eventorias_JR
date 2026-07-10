@@ -6,16 +6,6 @@ import java.util.Locale
 
 object DateFormatters {
 
-/*    private val dateFormat = SimpleDateFormat("EEEE d MMMM yyyy", Locale.FRENCH)
-    private val timeFormat = SimpleDateFormat("HH'h'mm", Locale.FRENCH)
-
-    fun formatDate(timestamp: Timestamp?): String =
-        timestamp?.toDate()?.let { dateFormat.format(it) }.orEmpty()
-            .replaceFirstChar { it.uppercase() }   // "samedi..." -> "Samedi..."
-
-    fun formatTime(timestamp: Timestamp?): String =
-        timestamp?.toDate()?.let { timeFormat.format(it) }.orEmpty()*/
-
     fun formatDate(timestamp: Timestamp?): String =
         timestamp?.toDate()?.let {
             SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL, Locale.getDefault())
