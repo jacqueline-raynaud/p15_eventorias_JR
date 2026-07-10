@@ -16,8 +16,3 @@ interface EventEditAction {
     data object OnRetry : EventEditAction
 }
 
-// presentation/eventedit/contract/EventEditEffect.kt
-interface EventEditEffect {
-    data object NavigateBack : EventEditEffect
-    data class ShowSnackbar(val message: String) : EventEditEffect
-}
