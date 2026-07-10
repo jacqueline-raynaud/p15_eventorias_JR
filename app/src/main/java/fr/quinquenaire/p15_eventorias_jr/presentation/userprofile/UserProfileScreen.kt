@@ -161,7 +161,8 @@ fun UserProfileContent(
                     TextButton(
                         onClick = {
                             onAction(UserProfileAction.OnConfirmDeleteAccount) },
-                        enabled = !uiState.isDeletingAccount
+                        enabled = !uiState.isDeletingAccount,
+                        modifier = Modifier.testTag("confirm_delete_dialog_button")
                     ) {
                         if (uiState.isDeletingAccount) {
                             Log.e("eventorias_jr", "isDeletingAccount = true")
