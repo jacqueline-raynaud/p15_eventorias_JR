@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.google.firebase.Timestamp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
@@ -34,8 +35,7 @@ class EventListScreenTest {
         Event(
             id = "1",
             name = "Concert de Rock",
-            date = "2026-10-15", // Format arbitraire pour l'exemple
-            time = "20:00",
+            date = Timestamp(1792056000L, 0),
             locationName = "Stade de France",
             category = "Musique",
             imageUrl = ""
@@ -43,8 +43,7 @@ class EventListScreenTest {
         Event(
             id = "2",
             name = "Match de Tennis",
-            date = "2026-11-20",
-            time = "14:00",
+            date = Timestamp(1795179600L, 0),
             locationName = "Roland Garros",
             category = "Sport",
             imageUrl = ""

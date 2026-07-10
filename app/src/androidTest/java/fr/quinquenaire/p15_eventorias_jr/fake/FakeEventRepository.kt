@@ -33,19 +33,33 @@ class FakeEventRepository @Inject constructor() : EventRepository {
             list.filter { it.category == category }
         }
 
-    override suspend fun createEvent(event: Event, imageUrl: Uri?): String {
+    override suspend fun createEvent(event: Event, imageUri: Uri?): String {
         val newEvent = event.copy(id = "fake_id_${System.currentTimeMillis()}")
         events.value = events.value + newEvent
         return newEvent.id
     }
 
-    override suspend fun updateEvent(event: Event) {
+
+    override suspend fun updateEvent(event: Event, imageUri: Uri?) {
+        // Dans notre fake, on ignore imageUri, on met juste à jour l'objet dans la liste
         events.value = events.value.map {
             if (it.id == event.id) event else it
         }
     }
 
-    override suspend fun deleteEvent(eventId: String) {
+    override suspend fun deleteEvent(eventId: String, imageUrl: String) {
+        // On supprime l'événement de la liste en filtrant.
+        // L'URL de l'image est ignorée car il n'y a pas de vrai stockage Firebase.
         events.value = events.value.filter { it.id != eventId }
+    }
+
+    override suspend fun anonymizeOrganizerEvents(uid: String) {
+        // Pour les tests d'interface actuels, cette méthode peut rester vide.
+        // L'essentiel est qu'elle existe pour que le compilateur soit satisfait !
+
+        // Si plus tard tu as besoin de tester l'anonymisation, tu pourras faire :
+        // events.value = events.value.map {
+        //     if (it.organizerId == uid) it.copy(organizerId = "anonyme") else it
+        // }
     }
 }

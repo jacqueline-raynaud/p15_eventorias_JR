@@ -503,7 +503,8 @@ private fun EventListContentPreview() {
                         id = "1", name = "Soirée Jazz", date = "2025-06-15",
                         time = "20:00", category = "Musique", imageUrl = "",
                         locationName = "Lyon", organizerId = "u1",
-                        latitude = null, longitude = null
+                        latitude = null, longitude = null,
+                        rawDate=null
                     )
                 )
             ),

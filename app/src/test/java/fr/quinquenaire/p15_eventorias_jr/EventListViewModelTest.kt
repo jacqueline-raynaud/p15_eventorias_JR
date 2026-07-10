@@ -6,6 +6,7 @@ import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListViewMod
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect
+import fr.quinquenaire.p15_eventorias_jr.testutils.TestTimestamps
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -17,11 +18,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
 import app.cash.turbine.test
+import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EventListViewModelTest : BehaviorSpec({
 
     val testDispatcher = UnconfinedTestDispatcher()
+
 
     beforeSpec {
         Dispatchers.setMain(testDispatcher)
@@ -32,9 +35,18 @@ class EventListViewModelTest : BehaviorSpec({
     }
 
     val fakeEvents = listOf(
-        Event(id = "1", name = "Concert", category = "Musique", date = "2025-06-15"),
-        Event(id = "2", name = "Marathon", category = "Sport", date = "2025-05-10"),
-        Event(id = "3", name = "Expo Art", category = "Art", date = "2025-07-01")
+        Event(
+            id = "1", name = "Concert", category = "Musique",
+            date = TestTimestamps.of(2025, Calendar.JUNE, 15, 20, 0)
+        ),
+        Event(
+            id = "2", name = "Marathon", category = "Sport",
+            date = TestTimestamps.of(2025, Calendar.MAY, 10, 9, 30)
+        ),
+        Event(
+            id = "3", name = "Expo Art", category = "Art",
+            date = TestTimestamps.of(2025, Calendar.JULY, 1, 14, 0)
+        )
     )
 
     // -------------------------------------------------------------------------

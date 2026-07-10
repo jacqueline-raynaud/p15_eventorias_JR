@@ -70,8 +70,8 @@ class EventListViewModel @Inject constructor(
                 .let { list ->
                     when (sortOrder) {
                         SortOrder.DEFAULT -> list
-                        SortOrder.BY_DATE_ASC  -> list.sortedBy { it.date }
-                        SortOrder.BY_DATE_DESC-> list.sortedByDescending { it.date }
+                        SortOrder.BY_DATE_ASC  -> list.sortedBy { it.rawDate?.seconds ?:0 }
+                        SortOrder.BY_DATE_DESC-> list.sortedByDescending { it.rawDate?.seconds ?:0  }
                         //SortOrder.BY_CATEGORY -> list.sortedBy { it.category }
 
                     }

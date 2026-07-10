@@ -37,13 +37,9 @@ class EventRepositoryImpl @Inject constructor(
         // Géocodage de l'adresse
         val location = try {
             geocoderManager.geocode(event.locationName)
-                //.also { Log.d("EventoriasApp", "Geocoded '${event.locationName}' -> $it") }
-        } /*catch (e: IOException) {
+        } catch (e: IOException) {
             Log.e("EventoriasApp", "Geocoding failed", e)
-            null    // on crée l'événement sans coordonnées plutôt que d'échouer*/
-        catch (e: Exception) {   // élargi à Exception le temps du debug
-            Log.e("EventoriasApp", "Geocoding failed", e)
-            null
+            null    // on crée l'événement sans coordonnées plutôt que d'échouer
         }
         //Création du document puis upoload image
         val eventId = firestoreManager.createEvent(event.copy(location = location))

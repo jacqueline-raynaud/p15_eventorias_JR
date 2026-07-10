@@ -1,12 +1,15 @@
 package fr.quinquenaire.p15_eventorias_jr
 
+import com.google.firebase.Timestamp
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import com.google.firebase.firestore.GeoPoint
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.toUi
+import fr.quinquenaire.p15_eventorias_jr.presentation.util.DateFormatters
+import fr.quinquenaire.p15_eventorias_jr.testutils.TestTimestamps
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
+import java.util.Calendar
 
 class EventMapperTest : DescribeSpec({
 
@@ -16,8 +19,7 @@ class EventMapperTest : DescribeSpec({
             val event = Event(
                 id = "abc",
                 name = "Soirée Jazz",
-                date = "2025-06-15",
-                time = "20:00",
+                date = TestTimestamps.of(2025, Calendar.JUNE, 15, 20, 0),
                 category = "Musique",
                 imageUrl = "https://example.com/img.jpg",
                 locationName = "Lyon",
@@ -28,8 +30,8 @@ class EventMapperTest : DescribeSpec({
 
             ui.id shouldBe "abc"
             ui.name shouldBe "Soirée Jazz"
-            ui.date shouldBe "2025-06-15"
-            ui.time shouldBe "20:00"
+            ui.date shouldBe DateFormatters.formatDate(event.date)
+            ui.time shouldBe DateFormatters.formatTime(event.date)
             ui.category shouldBe "Musique"
             ui.imageUrl shouldBe "https://example.com/img.jpg"
             ui.locationName shouldBe "Lyon"
