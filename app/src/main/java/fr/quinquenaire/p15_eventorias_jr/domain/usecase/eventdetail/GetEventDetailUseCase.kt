@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetEventDetailUseCase @Inject constructor(
-    private val EventRepository: EventRepository
+    private val eventRepository: EventRepository
 ) {
     operator fun invoke(eventId: String): Flow<Event?> {
-        return EventRepository.getEventDetail(eventId)
+        return eventRepository.getEventDetail(eventId)
     }
 
 }
