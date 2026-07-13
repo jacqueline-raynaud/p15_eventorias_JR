@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.viewmodels
 
 import android.net.Uri
 import app.cash.turbine.test

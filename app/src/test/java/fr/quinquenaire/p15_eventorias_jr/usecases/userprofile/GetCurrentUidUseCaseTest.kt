@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.usecases.userprofile
 
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.UserProfileRepository
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.GetCurrentUidUseCase
@@ -7,7 +7,6 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import javax.annotation.meta.When
 
 class GetCurrentUidUseCaseTest : BehaviorSpec({
 

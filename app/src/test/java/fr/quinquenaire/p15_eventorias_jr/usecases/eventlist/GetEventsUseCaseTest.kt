@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.usecases.eventlist
 
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.EventRepository

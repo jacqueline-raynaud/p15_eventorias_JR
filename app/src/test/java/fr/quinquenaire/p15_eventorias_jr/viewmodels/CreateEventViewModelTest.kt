@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.viewmodels
 
 import android.net.Uri
 import app.cash.turbine.test
@@ -16,7 +16,6 @@ import io.mockk.CapturingSlot
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.InternalPlatform.time
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.Dispatchers

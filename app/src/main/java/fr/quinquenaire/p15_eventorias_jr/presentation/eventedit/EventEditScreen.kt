@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +47,7 @@ import fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent.Time
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.contract.EventEditAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.contract.EventEditEffect
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.model.EventEditMutableState
+import fr.quinquenaire.p15_eventorias_jr.presentation.theme.P15_eventorias_jrTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -194,5 +196,31 @@ private fun EventEditForm(
                 Text(stringResource(R.string.save_changes))
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Previews
+// ---------------------------------------------------------------------------
+
+
+@Preview(showBackground = true)
+@Composable
+fun EventEditContentPreview() {
+    P15_eventorias_jrTheme {
+        EventEditContent(
+            uiState = EventEditMutableState(
+                name = "Concert de Jazz",
+                description = "Un super concert de jazz en plein air.",
+                category = EventCategory.MUSIQUE,
+                dateMillis = System.currentTimeMillis(),
+                hour = 20,
+                minute = 30,
+                address = "123 Rue du Jazz, Paris",
+                isLoading = false
+            ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {}
+        )
     }
 }

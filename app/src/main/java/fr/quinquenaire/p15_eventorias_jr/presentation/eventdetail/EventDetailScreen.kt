@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -51,7 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import fr.quinquenaire.p15_eventorias_jr.R
@@ -60,9 +58,6 @@ import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.Event
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailEffect
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.model.EventDetailMutableState
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.model.EventDetailUiState
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListContent
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListMutableState
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.EventListUiState
 import fr.quinquenaire.p15_eventorias_jr.presentation.theme.P15_eventorias_jrTheme
 import kotlinx.coroutines.flow.collectLatest
 

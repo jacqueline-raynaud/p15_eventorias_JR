@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.viewmodels
 
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.GetEventsUseCase
@@ -18,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
 import app.cash.turbine.test
+import kotlinx.coroutines.flow.flow
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -89,7 +90,7 @@ class EventListViewModelTest : BehaviorSpec({
 
     Given("un use case qui lève une exception") {
         val useCase = mockk<GetEventsUseCase>()
-        every { useCase() } returns kotlinx.coroutines.flow.flow {
+        every { useCase() } returns flow {
             throw Exception("Erreur réseau")
         }
 

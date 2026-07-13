@@ -1,8 +1,7 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
-import app.cash.turbine.turbineScope
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventdetail.GetEventDetailUseCase
@@ -12,7 +11,6 @@ import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.GetCurrentUi
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.EventDetailViewModel
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailEffect
-import io.kotest.core.coroutines.backgroundScope
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe

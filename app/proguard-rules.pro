@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Modèles Firestore désérialisés par réflexion via toObject() — à préserver de l'obfuscation
+-keep class fr.quinquenaire.p15_eventorias_jr.domain.model.Event { *; }
+-keep class fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile { *; }
+-keep class fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory { *; }
+
+-keepclassmembers class fr.quinquenaire.p15_eventorias_jr.domain.model.** {
+    <fields>;
+}

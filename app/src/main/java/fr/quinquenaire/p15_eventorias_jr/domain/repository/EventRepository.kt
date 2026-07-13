@@ -9,7 +9,7 @@ interface EventRepository {
     fun getEventDetail(eventId: String): Flow<Event?>
     fun searchEvents(query: String): Flow<List<Event>>
     fun getEventsByCategory(category: String): Flow<List<Event>>
-    suspend fun createEvent(event: Event, imageUrl: Uri?=null):String
+    suspend fun createEvent(event: Event, imageUri: Uri?=null):String
     suspend fun updateEvent(event: Event, imageUri: Uri? = null)
     suspend fun deleteEvent(eventId: String, imageUrl: String)
     suspend fun anonymizeOrganizerEvents(uid: String)

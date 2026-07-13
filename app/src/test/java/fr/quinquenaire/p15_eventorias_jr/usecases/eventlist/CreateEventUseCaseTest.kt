@@ -1,10 +1,9 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.usecases.eventlist
 
 import android.net.Uri
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.EventRepository
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.CreateEventUseCase
-import io.kotest.core.config.Defaults.isolationMode
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe

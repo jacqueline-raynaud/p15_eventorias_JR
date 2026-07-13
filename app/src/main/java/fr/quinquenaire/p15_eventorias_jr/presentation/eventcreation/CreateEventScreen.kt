@@ -37,12 +37,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.quinquenaire.p15_eventorias_jr.R
 import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventAction
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventEffect
 import fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent.CategoryField
 import fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent.DateField
 import fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent.ImagePickerField
 import fr.quinquenaire.p15_eventorias_jr.presentation.common.eventcomponent.TimeField
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventAction
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventEffect
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.model.CreateEventMutableState
 import kotlinx.coroutines.flow.collectLatest
 

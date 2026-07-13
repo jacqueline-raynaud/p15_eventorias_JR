@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr
+package fr.quinquenaire.p15_eventorias_jr.usecases.eventdetail
 
 import app.cash.turbine.test
 import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
