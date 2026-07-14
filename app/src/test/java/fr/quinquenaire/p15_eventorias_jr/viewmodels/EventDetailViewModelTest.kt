@@ -259,4 +259,18 @@ class EventDetailViewModelTest : BehaviorSpec({
             }
         }
     }
+
+    Given("l'utilisateur clique sur Réessayer") {
+        val (viewModel, _) = buildViewModel()
+
+        When("handleAction(OnRetry)") {
+            viewModel.handleAction(EventDetailAction.OnRetry)
+
+            Then("l'action est exécutée (couverture de code)") {
+                // L'action actuelle est Unit (ne fait rien), 
+                // on vérifie juste que l'état reste cohérent.
+                viewModel.uiState.value.error shouldBe null
+            }
+        }
+    }
 })

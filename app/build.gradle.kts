@@ -195,10 +195,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         "**/*_Provide*",
         "**/*_Bind*",
 
-        // Hilt ViewModels
-        "**/*_ViewModel*",
-        "**/HiltViewModel*",
-
         // Preview - Toutes les variantes possibles
         "**/*Preview*",
         "**/*\$Preview*",
@@ -206,9 +202,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         "**/*\$PreviewKt*",
         "**/*Preview*.*",
         "**/*_Preview*",
-
-        // Composables avec Preview
-        "**/*Composable*",
 
         // Autres générés
         "**/*_MembersInjector*",
