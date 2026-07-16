@@ -168,7 +168,7 @@ Scaffold(
                 when {
                     uiState.isLoading -> LoadingContent()
                     uiState.error != null -> ErrorContent(
-                        message = uiState.error!!,
+                        message = uiState.error,
                         onRetry = { onAction(EventListAction.LoadEvents) }
                     )
 

@@ -9,6 +9,7 @@ import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventdetail.GetEventDetailUseCase
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.UpdateEventUseCase
+import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.EventEditViewModel
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.contract.EventEditAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.contract.EventEditEffect
@@ -176,12 +177,42 @@ class EventEditViewModelTest : BehaviorSpec({
             }
         }
 
+        When("OnDescriptionChange") {
+            viewModel.handleAction(EventEditAction.OnDescriptionChange("nouvelle description"))
+            Then("la description est mise à jour") {
+                viewModel.uiState.value.description shouldBe "nouvelle description"
+            }
+        }
+
         When("OnCategoryChange") {
             viewModel.handleAction(EventEditAction.OnCategoryChange(EventCategory.SPORT))
             Then("la catégorie est mise à jour") {
                 viewModel.uiState.value.category shouldBe EventCategory.SPORT
             }
         }
+
+        When("OnDateSelected") {
+            viewModel.handleAction(EventEditAction.OnDateSelected(1_752_000_000_000L))
+            Then("dateMillis est mis à jour") {
+                viewModel.uiState.value.dateMillis shouldBe 1_752_000_000_000L
+            }
+        }
+
+        When ("OnTimeSelected") {
+            viewModel.handleAction(EventEditAction.OnTimeSelected(20, 30))
+                    Then ("hour et minute sont mis à jour") {
+                viewModel.uiState.value.hour shouldBe 20
+                viewModel.uiState.value.minute shouldBe 30
+            }
+        }
+
+        When("OnAddressChange") {
+            viewModel.handleAction(EventEditAction.OnAddressChange("Nouvelle adresse"))
+            Then("l'adresse est mise à jour") {
+                viewModel.uiState.value.address shouldBe "Nouvelle adresse"
+            }
+        }
+
 
         When("OnImageSelected") {
             val uri = mockk<Uri>()

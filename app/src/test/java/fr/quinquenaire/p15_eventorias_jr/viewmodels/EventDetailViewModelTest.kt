@@ -11,6 +11,7 @@ import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.GetCurrentUi
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.EventDetailViewModel
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventdetail.contract.EventDetailEffect
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -270,6 +271,22 @@ class EventDetailViewModelTest : BehaviorSpec({
                 // L'action actuelle est Unit (ne fait rien), 
                 // on vérifie juste que l'état reste cohérent.
                 viewModel.uiState.value.error shouldBe null
+            }
+        }
+    }
+
+    Given("l'argument eventId est manquant dans le SavedStateHandle") {
+        When("on initialise le ViewModel") {
+            Then("il doit lever une exception immédiatement") {
+                shouldThrow<IllegalStateException> {
+                    EventDetailViewModel(
+                        savedStateHandle = SavedStateHandle(), // Vide !
+                        getEventDetailUseCase = mockk(),
+                        getUserProfileUseCase = mockk(),
+                        getCurrentUidUseCase = mockk(),
+                        deleteEventUseCase = mockk()
+                    )
+                }
             }
         }
     }

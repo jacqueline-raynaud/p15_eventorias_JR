@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,12 +8,8 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.gms.google.services)
-    id("jacoco")
+    jacoco
 }
-jacoco {
-    toolVersion = "0.8.15"
-}
-
 
 android {
     namespace = "fr.quinquenaire.p15_eventorias_jr"
@@ -25,13 +22,11 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-
         testInstrumentationRunner = "fr.quinquenaire.p15_eventorias_jr.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
 
-        // Build Config Fields
         buildConfigField(
             "String",
             "GOOGLE_MAPS_API_KEY",
@@ -52,8 +47,8 @@ android {
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            enableUnitTestCoverage = true        // ← génère le .exec des tests unitaires
-            enableAndroidTestCoverage = true     // ← génère le .ec des tests instrumentés
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
     }
 
@@ -78,7 +73,6 @@ android {
             it.useJUnitPlatform()
         }
     }
-
 }
 
 dependencies {
@@ -147,7 +141,63 @@ dependencies {
     implementation(libs.okhttp)
 }
 
-// Helper function to get local properties
+tasks.register<JacocoReport>("jacocoCombinedReport") {
+
+    dependsOn(
+        "testDebugUnitTest",
+        "connectedDebugAndroidTest"
+    )
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    val excludes = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test.class",
+        "**/*Test$*.class",
+        "**/di/**",
+        "**/*Module*",
+        "**/*_HiltComponents*",
+        "**/*_Hilt*",
+        "**/Hilt_*",
+        "**/*_Factory*",
+        "**/*_MembersInjector*",
+        "**/*_GeneratedInjector*",
+        "**/*_ComponentTreeDeps*",
+        "**/hilt_aggregated_deps/**",
+        "**/dagger/hilt/**"
+    )
+
+    classDirectories.setFrom(
+        files(
+            fileTree("${layout.buildDirectory.get()} {/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes"){exclude(excludes)},
+            fileTree("${layout.buildDirectory.get()}/intermediates/javac/debug/compileDebugJavaWithJavac/classes"){exclude(excludes)},
+            fileTree(
+                "${layout.buildDirectory.get()}/intermediates/classes/debug/transformDebugClassesWithAsm/dirs"
+            ) {exclude(excludes)}
+        )
+    )
+
+    sourceDirectories.setFrom(
+        files(
+            "$projectDir/src/main/java",
+            "$projectDir/src/main/kotlin"
+        )
+    )
+    executionData.setFrom(
+        fileTree(layout.buildDirectory) {
+            include("outputs/unit_test_code_coverage/debugUnitTest/*.exec")
+            include("outputs/code_coverage/debugAndroidTest/**/*.ec")
+        }
+    )
+}
+
 fun getLocalProperty(key: String): String {
     val localProperties = Properties()
     val localFile = rootProject.file("local.properties")
@@ -156,88 +206,3 @@ fun getLocalProperty(key: String): String {
     }
     return localProperties.getProperty(key, "")
 }
-
-// report jacoco
-tasks.register("jacocoTestReport", JacocoReport::class) {
-    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
-
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-
-    val buildDir = layout.buildDirectory.get().asFile
-
-    // Filtres plus agressifs avec regex
-    val excludes = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "android/**/*.*",
-        "**/databinding/**",
-        "**/android/databinding/**",
-
-        // Hilt - Toutes les classes générées
-        "**/Dagger*",
-        "**/Hilt_*",
-        "**/*_HiltComponents*",
-        "**/*_Hilt*",
-        "**/*_Factory*",
-        "**/*_MembersInjector*",
-        "**/*_GeneratedInjector*",
-        "**/*_ComponentTreeDeps*",
-        "**/hilt_aggregated_deps/**",
-        "**/di/**",
-        "**/*Module*",
-        "**/*Component*",
-        "**/*_Provide*",
-        "**/*_Bind*",
-
-        // Preview - Toutes les variantes possibles
-        "**/*Preview*",
-        "**/*\$Preview*",
-        "**/*PreviewKt*",
-        "**/*\$PreviewKt*",
-        "**/*Preview*.*",
-        "**/*_Preview*",
-
-        // Autres générés
-        "**/*_MembersInjector*",
-        "**/*_Factory*",
-        "**/*_ProvideFactory*"
-    )
-
-    // Méthode plus agressive : filtrer par nom de fichier
-    val debugTree = fileTree("${buildDir}/intermediates/javac/debug") {
-        exclude(excludes)
-        // Exclusion supplémentaire par pattern de nom
-        exclude {
-            it.name.contains("Preview", ignoreCase = true) ||
-                    it.name.contains("Hilt", ignoreCase = true) ||
-                    it.name.contains("Dagger", ignoreCase = true) ||
-                    it.name.contains("_Factory", ignoreCase = true) ||
-                    it.name.contains("_MembersInjector", ignoreCase = true)
-        }
-    }
-
-    val kotlinDebugTree = fileTree("${buildDir}/tmp/kotlin-classes/debug") {
-        exclude(excludes)
-        exclude {
-            it.name.contains("Preview", ignoreCase = true) ||
-                    it.name.contains("Hilt", ignoreCase = true) ||
-                    it.name.contains("Dagger", ignoreCase = true) ||
-                    it.name.contains("_Factory", ignoreCase = true)
-        }
-    }
-
-    sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
-    classDirectories.setFrom(files(listOf(debugTree, kotlinDebugTree)))
-    executionData.setFrom(fileTree(buildDir) {
-        include("jacoco/testDebugUnitTest.exec", "outputs/code_coverage/debugAndroidTest/connected/*.ec")
-    })
-}
-
-
-

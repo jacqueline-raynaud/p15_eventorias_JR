@@ -32,6 +32,7 @@ class EventListViewModel @Inject constructor(
     private val _sortOrder = MutableStateFlow(SortOrder.BY_DATE_ASC)
     private val _error = MutableStateFlow<String?>(null)
     private val _searchQuery = MutableStateFlow("")
+    private val _reloadTrigger = MutableStateFlow(0)
 
 
     // Flow des événements mappés depuis Firestore
@@ -51,13 +52,7 @@ class EventListViewModel @Inject constructor(
         _sortOrder,
         _error,
         _searchQuery
-    ) {  array ->
-        // combine avec 5 sources utilise un tableau
-        val events = array[0] as List<EventListUiState>
-        val category = array[1] as String?
-        val sortOrder = array[2] as SortOrder
-        val error = array[3] as String?
-        val query = array[4] as String
+    ) {  events, category, sortOrder, error, query ->
 
         EventListMutableState(
             events = events
@@ -95,7 +90,10 @@ class EventListViewModel @Inject constructor(
 
     fun handleAction(action: EventListAction) {
         when (action) {
-            is EventListAction.LoadEvents       -> Unit // géré par stateIn au démarrage
+            is EventListAction.LoadEvents       -> {
+                _error.update { null }        // efface l'erreur
+                _reloadTrigger.update { it + 1 }  // relance flatMapLatest
+            }
             is EventListAction.FilterByCategory -> _selectedCategory.update { action.category }
             is EventListAction.ChangeSortOrder  -> _sortOrder.update { action.sortOrder }
             is EventListAction.OnEventClick     -> onEventClick(action.eventId)
