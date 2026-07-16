@@ -9,7 +9,6 @@ import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventdetail.GetEventDetailUseCase
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.UpdateEventUseCase
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.EventEditViewModel
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.contract.EventEditAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventedit.contract.EventEditEffect

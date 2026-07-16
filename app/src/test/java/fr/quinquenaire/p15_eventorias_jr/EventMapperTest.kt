@@ -1,14 +1,13 @@
 package fr.quinquenaire.p15_eventorias_jr
 
-import com.google.firebase.Timestamp
-import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import com.google.firebase.firestore.GeoPoint
+import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model.toUi
 import fr.quinquenaire.p15_eventorias_jr.presentation.util.DateFormatters
 import fr.quinquenaire.p15_eventorias_jr.testutils.TestTimestamps
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import java.util.Calendar
 
 class EventMapperTest : DescribeSpec({

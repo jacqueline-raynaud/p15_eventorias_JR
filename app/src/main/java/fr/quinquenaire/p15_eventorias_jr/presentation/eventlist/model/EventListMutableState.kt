@@ -1,6 +1,6 @@
 package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model
 
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.SortOrder
+import fr.quinquenaire.p15_eventorias_jr.domain.SortOrder
 
 class EventListMutableState (
     val events: List<EventListUiState> = emptyList(),

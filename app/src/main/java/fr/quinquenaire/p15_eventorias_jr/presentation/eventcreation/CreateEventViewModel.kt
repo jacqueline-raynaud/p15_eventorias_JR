@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.CreateEventUseCase
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.GetCurrentUidUseCase
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventAction
@@ -90,21 +89,34 @@ class CreateEventViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, error = null) }
-            try {
-                val event = Event(
-                    name = state.name.trim(),
-                    description = state.description.trim(),
-                    date = buildTimestamp(state.dateMillis!!, state.hour!!, state.minute!!),
-                    locationName = state.address.trim(),
-                    category = state.category!!.name,
-                    organizerId = organizerId
-                )
-                createEventUseCase(event, state.imageUri)
-                emitEffect(CreateEventEffect.NavigateBack)
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isSaving = false) }
-                emitEffect(CreateEventEffect.ShowSnackbar("Erreur lors de la création de l'événement"))
-            }
+
+            // construction date au format ui
+            val dateTimestamp = buildTimestamp(
+                state.dateMillis!!,
+                state.hour!!,
+                state.minute!!
+            )
+            // apple usecase
+
+            val result = createEventUseCase(
+                name = state.name,
+                description = state.description,
+                date = dateTimestamp,
+                locationName = state.address,
+                category = state.category!!.name,
+                organizerId = organizerId,
+                imageUri = state.imageUri
+            )
+
+            result.fold(
+                onSuccess = {
+                    emitEffect(CreateEventEffect.NavigateBack)
+                },
+                onFailure = { e ->
+                    _uiState.update { it.copy(isSaving = false) }
+                    emitEffect(CreateEventEffect.ShowSnackbar(e.message ?: "Erreur"))
+                }
+            )
         }
     }
 }

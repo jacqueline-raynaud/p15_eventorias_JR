@@ -1,5 +1,4 @@
 import java.util.Properties
-import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     alias(libs.plugins.android.application)

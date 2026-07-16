@@ -1,9 +1,9 @@
 package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.model
 
 import androidx.compose.runtime.Immutable
+import com.google.firebase.Timestamp
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.presentation.util.DateFormatters
-import com.google.firebase.Timestamp
 
 @Immutable
 data class EventListUiState(

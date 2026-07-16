@@ -2,10 +2,15 @@ package fr.quinquenaire.p15_eventorias_jr
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import fr.quinquenaire.p15_eventorias_jr.R
 import fr.quinquenaire.p15_eventorias_jr.presentation.userprofile.UserProfileContent
 import fr.quinquenaire.p15_eventorias_jr.presentation.userprofile.contract.UserProfileAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.userprofile.model.UserProfileMutableState

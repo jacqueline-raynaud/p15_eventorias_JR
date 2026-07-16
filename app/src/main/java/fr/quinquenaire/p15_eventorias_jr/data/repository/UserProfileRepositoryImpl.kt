@@ -4,9 +4,9 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseAuthManager
-import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseMessagingManager
+import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.UserProfileRepository
 import kotlinx.coroutines.flow.Flow

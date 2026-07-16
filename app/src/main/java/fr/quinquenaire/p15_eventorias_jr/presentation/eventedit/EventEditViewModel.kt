@@ -47,9 +47,9 @@ class EventEditViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                val event = getEventDetailUseCase(eventId).first()   // instantané, pas d'écoute continue
+                val event = getEventDetailUseCase(eventId).first() //flow existant
                 if (event == null) {
-                    _uiState.update { it.copy(isLoading = false, error = "Événement introuvable") }
+                    _uiState.update { it.copy(isLoading = false, error = "Event not found") }
                     return@launch
                 }
 
@@ -118,24 +118,40 @@ class EventEditViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, error = null) }
             try {
+                //detece changement d'adresse pour un nouveau geocodage
                 val addressChanged = state.address.trim() != state.initialAddress
 
-                val event = Event(
+                val eventToUpdate = Event(
                     id = eventId,
                     name = state.name.trim(),
                     description = state.description.trim(),
                     date = buildTimestamp(state.dateMillis!!, state.hour!!, state.minute!!),
                     locationName = state.address.trim(),
-                    // null = signal au repository "regéocoder" ; sinon on garde la localisation actuelle
+                    // null = signale au usecase geocodage a faire; sinon on garde la localisation actuelle
                     location = if (addressChanged) null else state.initialLocation,
                     category = state.category!!.name,
                     imageUrl = state.existingImageUrl,
                     organizerId = state.organizerId,
                     guests = state.guests
                 )
+                // appel au usecase
+                val result = updateEventUseCase(eventId, eventToUpdate, state.imageUri)
 
-                updateEventUseCase(event, state.imageUri)
-                emitEffect(EventEditEffect.NavigateBack)
+                // résultat
+                result.fold(
+                    onSuccess = {
+                        emitEffect(EventEditEffect.NavigateBack)
+                    },
+                    onFailure = { e ->
+                        _uiState.update { it.copy(isSaving = false) }
+                        emitEffect(
+                            EventEditEffect.ShowSnackbar(
+                                e.message ?: "Erreur lors de la modification"
+                            )
+                        )
+                    }
+                )
+
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false) }
                 emitEffect(EventEditEffect.ShowSnackbar("Erreur lors de la modification de l'événement"))

@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.presentation.eventlist
+package fr.quinquenaire.p15_eventorias_jr.domain
 
 enum class SortOrder {
     DEFAULT,

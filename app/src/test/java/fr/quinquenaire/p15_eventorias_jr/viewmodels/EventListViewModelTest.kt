@@ -1,9 +1,10 @@
 package fr.quinquenaire.p15_eventorias_jr.viewmodels
 
+import app.cash.turbine.test
+import fr.quinquenaire.p15_eventorias_jr.domain.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.GetEventsUseCase
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListViewModel
-import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect
 import fr.quinquenaire.p15_eventorias_jr.testutils.TestTimestamps
@@ -15,10 +16,11 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.*
-import app.cash.turbine.test
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)

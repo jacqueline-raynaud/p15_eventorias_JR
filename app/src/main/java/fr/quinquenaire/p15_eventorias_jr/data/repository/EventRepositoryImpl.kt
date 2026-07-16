@@ -1,49 +1,99 @@
 package fr.quinquenaire.p15_eventorias_jr.data.repository
 
 import android.net.Uri
-import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import fr.quinquenaire.p15_eventorias_jr.data.location.GeocoderManager
-import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
+import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
+import fr.quinquenaire.p15_eventorias_jr.domain.EventQueryParams
+import fr.quinquenaire.p15_eventorias_jr.domain.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.EventRepository
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import java.io.IOException
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
     private val firestoreManager: FirebaseFirestoreManager,
     private val storageManager: FirebaseStorageManager,
     private val geocoderManager: GeocoderManager
 ) : EventRepository {
 
-    override fun getEvents(): Flow<List<Event>> {
-        return firestoreManager.getEvents()
+    override fun getEventsStream(params: EventQueryParams): Flow<List<Event>> = callbackFlow {
+        var query: Query = firestore.collection("events")
+
+
+        // 1. Filtrage par catégorie (Natifs Firestore)
+        if (params.category != null) {
+            query = query.whereEqualTo("category", params.category)
+        }
+
+        // 2. Tri (Natifs Firestore)
+        // Attention : Firestore nécessite un index composite si vous combinez where + orderBy
+        query = when (params.sortOrder) {
+            SortOrder.BY_DATE_ASC -> query.orderBy("date", Query.Direction.ASCENDING)
+            SortOrder.BY_DATE_DESC -> query.orderBy("date", Query.Direction.DESCENDING)
+            SortOrder.DEFAULT -> query.orderBy("date", Query.Direction.ASCENDING)
+            //SortOrder.BY_CATEGORY -> query.orderBy("category",Query.Direction.ASCENDING)
+        }
+
+        // 3. Limite
+        query = query.limit(params.limit.toLong())
+
+        // Requête Inscription au listener
+        android.util.Log.d("DEBUG_QUERY", "Building query with category: ${params.category} and sort: ${params.sortOrder}")
+        val registration = query.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                close(e) // Ferme le flow avec l'erreur
+                return@addSnapshotListener
+            }
+
+            //val events = snapshot?.toObjects(Event::class.java) ?: emptyList()
+            val events = snapshot?.documents?.mapNotNull { doc ->
+                doc.toObject(Event::class.java)?.copy(id = doc.id)
+            } ?: emptyList()
+
+            android.util.Log.d("DEBUG_REPO 1", "Snapshot received. Docs count: ${snapshot?.documents?.size}")
+            android.util.Log.d("DEBUG_REPO 1", "Events mapped count: ${events.size}")
+
+            // 4. Recherche textuelle
+            val filteredEvents = if (params.searchQuery.isBlank()) {
+                events
+            } else {
+                // ajouter description ? description
+                events.filter {
+                    it.name.contains(params.searchQuery, ignoreCase = true) ||
+                            it.locationName.contains(params.searchQuery, ignoreCase = true) ||
+                            it.description.contains(params.searchQuery, ignoreCase = true)
+                }
+            }
+            android.util.Log.d("DEBUG_REPO 2", "Snapshot received. Docs count: ${snapshot?.documents?.size}")
+            android.util.Log.d("DEBUG_REPO 2", "Events mapped count: ${events.size}")
+
+            // Envoie les données dans le flow
+            trySend(filteredEvents)
+        }
+
+        // nettoyage flow annulé (sort ecran)
+        awaitClose {
+            registration.remove()
+        }
     }
+
+/*    override fun getEventsByCategory(category: String): Flow<List<Event>> {
+        return firestoreManager.getEventsByCategory(category)
+    }*/
 
     override fun getEventDetail(eventId: String): Flow<Event?> {
         return firestoreManager.getEventDetail(eventId)
     }
 
-    override fun searchEvents(query: String): Flow<List<Event>> {
-        return firestoreManager.searchEvents(query)
-    }
-
-    override fun getEventsByCategory(category: String): Flow<List<Event>> {
-        return firestoreManager.getEventsByCategory(category)
-    }
-
     override suspend fun createEvent(event: Event, imageUri: Uri?): String {
-        // Géocodage de l'adresse
-        val location = try {
-            geocoderManager.geocode(event.locationName)
-        } catch (e: IOException) {
-            Log.e("EventoriasApp", "Geocoding failed", e)
-            null    // on crée l'événement sans coordonnées plutôt que d'échouer
-        }
-        //Création du document puis upoload image
-        val eventId = firestoreManager.createEvent(event.copy(location = location))
-        //val eventId = firestoreManager.createEvent(event)
+
+        val eventId = firestoreManager.createEvent(event)
         if (imageUri != null) {
             val imageUrl = storageManager.uploadEventImage(eventId, imageUri)
             firestoreManager.updateEventImageUrl(eventId, imageUrl)
@@ -52,24 +102,13 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateEvent(event: Event, imageUri: Uri?) {
-        val location = if (event.location == null) {
-            try {
-                geocoderManager.geocode(event.locationName)
-            } catch (e: Exception) {
-                Log.e("EventoriasApp", "Geocoding failed on update", e)
-                null
-            }
-        } else {
-            event.location
-        }
 
         val imageUrl = if (imageUri != null) {
             storageManager.uploadEventImage(event.id, imageUri)
         } else {
             event.imageUrl
         }
-
-        firestoreManager.updateEvent(event.copy(location = location, imageUrl = imageUrl))
+        firestoreManager.updateEvent(event.copy(imageUrl = imageUrl))
     }
 
     override suspend fun deleteEvent(eventId: String, imageUrl: String) {
@@ -83,3 +122,4 @@ class EventRepositoryImpl @Inject constructor(
         firestoreManager.anonymizeOrganizerEvents(uid)
     }
 }
+

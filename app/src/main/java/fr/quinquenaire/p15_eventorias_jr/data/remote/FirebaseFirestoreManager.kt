@@ -1,5 +1,6 @@
 package fr.quinquenaire.p15_eventorias_jr.data.remote
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
@@ -7,7 +8,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import android.util.Log
 
 
 class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
@@ -18,7 +18,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             .orderBy("date", com.google.firebase.firestore.Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    //Log.e("EventoriasApp", error, "Error fetching events")
                     Log.e("EventoriasApp", "Error fetching events", error)
                     trySend(emptyList())
                     return@addSnapshotListener
@@ -45,7 +44,9 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             }
         awaitClose { listener.remove() }
     }
-// if the database grows
+
+
+    // if the database grows
     fun searchEvents(query: String): Flow<List<Event>> = callbackFlow {
         val listener = firestore.collection("events")
             .orderBy("name")

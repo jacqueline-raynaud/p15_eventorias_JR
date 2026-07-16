@@ -1,9 +1,9 @@
 package fr.quinquenaire.p15_eventorias_jr.data.remote
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
-import android.util.Log
 
 
 class FirebaseStorageManager(private val firebaseStorage: FirebaseStorage) {

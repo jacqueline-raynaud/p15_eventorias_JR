@@ -1,6 +1,5 @@
 package fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile
 
-import android.util.Log
 import fr.quinquenaire.p15_eventorias_jr.domain.repository.UserProfileRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject

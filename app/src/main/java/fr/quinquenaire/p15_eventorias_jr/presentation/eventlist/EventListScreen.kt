@@ -64,6 +64,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import fr.quinquenaire.p15_eventorias_jr.R
+import fr.quinquenaire.p15_eventorias_jr.domain.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect

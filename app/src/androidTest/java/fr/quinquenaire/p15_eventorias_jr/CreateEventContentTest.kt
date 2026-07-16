@@ -2,11 +2,13 @@ package fr.quinquenaire.p15_eventorias_jr
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import fr.quinquenaire.p15_eventorias_jr.R
-import fr.quinquenaire.p15_eventorias_jr.TestActivity
 import fr.quinquenaire.p15_eventorias_jr.domain.model.EventCategory
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.CreateEventContent
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventcreation.contract.CreateEventAction
