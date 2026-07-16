@@ -56,8 +56,8 @@ class EventListScreenTest {
         fakeRepository.setEvents(fakeEvents)
         composeTestRule.setContent {
             EventListScreen(
-                onNavigateToDetail = {},
-                onNavigateToCreate = {}
+                onNavigateToDetail = { _ -> },
+                onNavigateToCreate = { }
             )
         }
     }
