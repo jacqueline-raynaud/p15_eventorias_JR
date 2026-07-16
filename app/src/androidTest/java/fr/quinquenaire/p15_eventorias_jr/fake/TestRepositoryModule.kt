@@ -27,4 +27,5 @@ abstract class TestRepositoryModule {
     abstract fun bindUserProfileRepository(
         fake: FakeUserProfileRepository
     ): UserProfileRepository
+
 }

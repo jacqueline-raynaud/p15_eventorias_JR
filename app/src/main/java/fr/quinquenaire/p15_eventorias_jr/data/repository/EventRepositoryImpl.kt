@@ -3,7 +3,6 @@ package fr.quinquenaire.p15_eventorias_jr.data.repository
 import android.net.Uri
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import fr.quinquenaire.p15_eventorias_jr.data.location.GeocoderManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.domain.EventQueryParams
@@ -18,8 +17,7 @@ import javax.inject.Inject
 class EventRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firestoreManager: FirebaseFirestoreManager,
-    private val storageManager: FirebaseStorageManager,
-    private val geocoderManager: GeocoderManager
+    private val storageManager: FirebaseStorageManager
 ) : EventRepository {
 
     override fun getEventsStream(params: EventQueryParams): Flow<List<Event>> = callbackFlow {

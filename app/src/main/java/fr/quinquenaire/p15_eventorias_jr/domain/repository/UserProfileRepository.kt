@@ -27,5 +27,8 @@ interface UserProfileRepository {
     suspend fun uploadUserAvatar(uid: String, avatarUri: Uri): String
 
     suspend fun deleteProfileData(uid: String, avatarUrl: String)
+
     suspend fun deleteAuthAccount()
+
+    suspend fun updateFcmToken(uid: String, token: String)
 }

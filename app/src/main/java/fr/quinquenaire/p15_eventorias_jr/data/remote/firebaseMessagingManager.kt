@@ -29,4 +29,13 @@ class FirebaseMessagingManager @Inject constructor(
             throw e
         }
     }
+
+    suspend fun getToken(): String? {
+        return try {
+            firebaseMessaging.token.await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Error getting FCM token", e)
+            null
+        }
+    }
 }

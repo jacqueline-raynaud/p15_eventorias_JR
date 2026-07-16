@@ -65,22 +65,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         awaitClose { listener.remove() }
     }
 
-    fun getEventsByCategory(category: String): Flow<List<Event>> = callbackFlow {
-        val listener = firestore.collection("events")
-            .whereEqualTo("category", category)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(emptyList())
-                    return@addSnapshotListener
-                }
-                val events = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject(Event::class.java)?.copy(id = doc.id)
-                } ?: emptyList()
-                trySend(events)
-            }
-        awaitClose { listener.remove() }
-    }
-
     suspend fun createEvent(event: Event): String {
         return try {
             val ref = firestore.collection("events").document()
@@ -167,7 +151,7 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         }
     }
 
-    suspend fun createUserProfile(user: UserProfile) {
+    /*suspend fun createUserProfile(user: UserProfile) {
         try {
             firestore.collection("users").document(user.uid).set(user).await()
         } catch (e: Exception) {
@@ -175,7 +159,7 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             Log.e("EventoriasApp", "Error creating user profile", e)
             throw e
         }
-    }
+    }*/
 
     suspend fun updateUserProfile(profile: UserProfile) {
         try {
@@ -194,23 +178,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         }
     }
 
-    suspend fun toggleNotifications(uid: String, enabled: Boolean) {
-        try {
-            firestore.collection("users").document(uid)
-                .update(
-                    mapOf(
-                        "notificationsEnabled" to enabled,
-                        "updatedAt" to System.currentTimeMillis()
-                    )
-                )
-                .await()
-        } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error toggling notifications")
-            Log.e("EventoriasApp", "Error toggling notifications", e)
-            throw e
-        }
-    }
-
     suspend fun updateNotificationSetting(uid: String, enabled: Boolean) {
         try {
             firestore.collection("users")
@@ -225,6 +192,16 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
 
     companion object {
         const val ANONYMOUS_ORGANIZER_ID = "utilisateur_supprime"
+    }
+
+    suspend fun updateFcmToken(uid: String, token: String) {
+        try {
+            firestore.collection("users").document(uid)
+                .update("fcmToken", token)
+                .await()
+        } catch (e: Exception) {
+            Log.e("EventoriasApp", "Erreur lors de la mise à jour du FCM Token", e)
+        }
     }
 
     suspend fun anonymizeOrganizerEvents(uid: String) {

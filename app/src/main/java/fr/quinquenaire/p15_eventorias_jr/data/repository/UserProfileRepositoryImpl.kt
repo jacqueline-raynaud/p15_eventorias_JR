@@ -17,7 +17,8 @@ class UserProfileRepositoryImpl @Inject constructor(
     private val storageManager: FirebaseStorageManager,
     private val firebaseAuth: FirebaseAuth,
     private val firebaseAuthManager: FirebaseAuthManager,
-    private val messagingManager: FirebaseMessagingManager
+    private val messagingManager: FirebaseMessagingManager,
+
 ) : UserProfileRepository {
 
     override fun getUserProfile(uid: String): Flow<UserProfile?> {
@@ -33,6 +34,10 @@ class UserProfileRepositoryImpl @Inject constructor(
     }
 
     // notifications
+
+    override suspend fun updateFcmToken(uid: String, token: String) {
+        firestoreManager.updateFcmToken(uid, token)
+    }
 
     private suspend fun applyNotificationSubscription(enabled: Boolean) {
         if (enabled) messagingManager.subscribe() else messagingManager.unsubscribe()

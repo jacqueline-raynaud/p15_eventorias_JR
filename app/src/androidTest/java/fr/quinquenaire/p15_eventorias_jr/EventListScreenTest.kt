@@ -37,7 +37,7 @@ class EventListScreenTest {
             name = "Concert de Rock",
             date = Timestamp(1792056000L, 0),
             locationName = "Stade de France",
-            category = "Musique",
+            category = "MUSIQUE",
             imageUrl = ""
         ),
         Event(
@@ -45,7 +45,7 @@ class EventListScreenTest {
             name = "Match de Tennis",
             date = Timestamp(1795179600L, 0),
             locationName = "Roland Garros",
-            category = "Sport",
+            category = "SPORT",
             imageUrl = ""
         )
     )
@@ -91,7 +91,7 @@ class EventListScreenTest {
     @Test
     fun test_filter_by_category() {
         composeTestRule
-            .onNodeWithTag("Chip_Sport")
+            .onNodeWithTag("Chip_SPORT")
             .performClick()
 
         composeTestRule

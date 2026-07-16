@@ -9,10 +9,12 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import fr.quinquenaire.p15_eventorias_jr.domain.model.UserProfile
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.userprofile.CreateUserProfileUseCase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -65,6 +67,9 @@ class FirebaseUiActivity : AppCompatActivity() {
                     // displayName de Firebase Auth = "Prénom Nom" (Google) ou
                     // le nom saisi (email). On le découpe simplement.
                     val names = user.displayName?.split(" ") ?: emptyList()
+                    val token = FirebaseMessaging.getInstance().token.await() // Nécessite import kotlinx.coroutines.tasks.await
+
+
                     createUserProfileUseCase(
                         UserProfile(
                             uid = user.uid,
@@ -72,7 +77,8 @@ class FirebaseUiActivity : AppCompatActivity() {
                             lastName = names.drop(1).joinToString(" "),
                             email = user.email ?: "",
                             avatarUrl = user.photoUrl?.toString() ?: "",
-                            notificationEnabled = false
+                            notificationEnabled = true,
+                            fcmToken = token
                         )
                     )
                     startActivity(Intent(this@FirebaseUiActivity, MainActivity::class.java))

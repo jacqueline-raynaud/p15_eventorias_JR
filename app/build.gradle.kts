@@ -126,11 +126,13 @@ dependencies {
 
     // Testing - Instrumented Tests
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.mockk.android)
 
     // kotest
     testImplementation(libs.kotest.runner.junit5)
@@ -204,4 +206,63 @@ fun getLocalProperty(key: String): String {
         localProperties.load(localFile.inputStream())
     }
     return localProperties.getProperty(key, "")
+}
+
+tasks.register("aggregateTestReportsHtml") {
+
+    dependsOn(
+        "testDebugUnitTest",
+        "connectedDebugAndroidTest"
+    )
+
+    doLast {
+
+        val reportDir = layout.buildDirectory.dir("reports/allTests").get().asFile
+
+        reportDir.mkdirs()
+
+        File(reportDir, "index.html").writeText(
+            """
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <title>Rapports de tests</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 40px;
+                    }
+                    h1 {
+                        color: #333;
+                    }
+                    ul {
+                        line-height: 2;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Rapports de tests Eventorias</h1>
+
+                <ul>
+                    <li>
+                        <a href="../tests/testDebugUnitTest/index.html">
+                            Rapport des tests unitaires
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="../androidTests/connected/index.html">
+                            Rapport des tests instrumentés Android
+                        </a>
+                    </li>
+                </ul>
+
+            </body>
+            </html>
+            """.trimIndent()
+        )
+
+        println("Rapport agrégé : ${reportDir.absolutePath}/index.html")
+    }
 }

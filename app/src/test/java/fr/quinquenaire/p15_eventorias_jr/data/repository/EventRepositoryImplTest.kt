@@ -2,8 +2,7 @@ package fr.quinquenaire.p15_eventorias_jr.data.repository
 
 import android.net.Uri
 import android.util.Log
-import com.google.firebase.firestore.GeoPoint
-import fr.quinquenaire.p15_eventorias_jr.data.location.GeocoderManager
+import com.google.firebase.firestore.FirebaseFirestore
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseFirestoreManager
 import fr.quinquenaire.p15_eventorias_jr.data.remote.FirebaseStorageManager
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
@@ -18,7 +17,6 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import java.io.IOException
 
 class EventRepositoryImplTest : BehaviorSpec({
 
@@ -26,6 +24,7 @@ class EventRepositoryImplTest : BehaviorSpec({
 
     beforeSpec {
         mockkStatic(Log::class)
+        every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
     }
@@ -34,33 +33,33 @@ class EventRepositoryImplTest : BehaviorSpec({
         unmockkStatic(Log::class)
     }
 
+    val firestore = mockk<FirebaseFirestore>()
     val firestoreManager = mockk<FirebaseFirestoreManager>()
     val storageManager = mockk<FirebaseStorageManager>()
-    val geocoderManager = mockk<GeocoderManager>()
-    val repository = EventRepositoryImpl(firestoreManager, storageManager, geocoderManager)
+    
+    val repository = EventRepositoryImpl(firestore, firestoreManager, storageManager)
 
-    Given("getEvents") {
-        val events = listOf(Event(id = "1", name = "Event 1"))
-        every { firestoreManager.getEvents() } returns flowOf(events)
+    Given("getEventDetail") {
+        val eventId = "1"
+        val event = Event(id = eventId, name = "Event 1")
+        every { firestoreManager.getEventDetail(eventId) } returns flowOf(event)
 
-        When("appel de getEvents") {
+        When("appel de getEventDetail") {
             Then("doit retourner le flow de firestoreManager") {
-                repository.getEvents().collect {
-                    it shouldBe events
+                repository.getEventDetail(eventId).collect {
+                    it shouldBe event
                 }
             }
         }
     }
 
     Given("createEvent") {
-        val event = Event(name = "New Event", locationName = "Paris")
-        val eventWithLocation = event.copy(location = GeoPoint(48.8566, 2.3522))
+        val event = Event(name = "New Event")
         val imageUri = mockk<Uri>()
         val eventId = "generated_id"
 
-        When("le géocodage réussit et une image est fournie") {
-            coEvery { geocoderManager.geocode("Paris") } returns GeoPoint(48.8566, 2.3522)
-            coEvery { firestoreManager.createEvent(eventWithLocation) } returns eventId
+        When("une image est fournie") {
+            coEvery { firestoreManager.createEvent(event) } returns eventId
             coEvery { storageManager.uploadEventImage(eventId, imageUri) } returns "http://image.url"
             coEvery { firestoreManager.updateEventImageUrl(eventId, "http://image.url") } returns Unit
 
@@ -69,64 +68,57 @@ class EventRepositoryImplTest : BehaviorSpec({
                 result shouldBe eventId
             }
 
-            Then("tous les managers doivent être sollicités correctement") {
-                coVerify { geocoderManager.geocode("Paris") }
-                coVerify { firestoreManager.createEvent(eventWithLocation) }
+            Then("on crée l'event puis on upload l'image") {
+                coVerify { firestoreManager.createEvent(event) }
                 coVerify { storageManager.uploadEventImage(eventId, imageUri) }
                 coVerify { firestoreManager.updateEventImageUrl(eventId, "http://image.url") }
             }
         }
 
-        When("le géocodage échoue (IOException)") {
-            coEvery { geocoderManager.geocode("Paris") } throws IOException("Network error")
-            coEvery { firestoreManager.createEvent(event.copy(location = null)) } returns eventId
+        When("aucune image n'est fournie") {
+            coEvery { firestoreManager.createEvent(event) } returns eventId
 
             runTest {
                 val result = repository.createEvent(event, null)
                 result shouldBe eventId
             }
 
-            Then("l'événement est créé sans localisation") {
-                coVerify { firestoreManager.createEvent(event.copy(location = null)) }
+            Then("seul firestoreManager.createEvent est appelé") {
+                coVerify { firestoreManager.createEvent(event) }
+                coVerify(exactly = 0) { storageManager.uploadEventImage(any(), any()) }
             }
         }
     }
 
     Given("updateEvent") {
-        val event = Event(id = "1", name = "Updated Event", locationName = "Lyon")
-        
-        When("aucune nouvelle image n'est fournie et la location est déjà présente") {
-            val eventWithLocation = event.copy(location = GeoPoint(45.7640, 4.8357))
-            coEvery { firestoreManager.updateEvent(eventWithLocation) } returns Unit
+        val event = Event(id = "1", name = "Updated Event", imageUrl = "old_url")
 
-            runTest {
-                repository.updateEvent(eventWithLocation, null)
-            }
-
-            Then("seul firestoreManager.updateEvent est appelé") {
-                coVerify { firestoreManager.updateEvent(eventWithLocation) }
-                coVerify(exactly = 0) { geocoderManager.geocode(any()) }
-                coVerify(exactly = 0) { storageManager.uploadEventImage(any(), any()) }
-            }
-        }
-
-        When("une nouvelle image est fournie et la location doit être géocodée") {
+        When("une nouvelle image est fournie") {
             val imageUri = mockk<Uri>()
-            val location = GeoPoint(45.7640, 4.8357)
-            val updatedEvent = event.copy(location = location, imageUrl = "http://new.url")
-            
-            coEvery { geocoderManager.geocode("Lyon") } returns location
-            coEvery { storageManager.uploadEventImage("1", imageUri) } returns "http://new.url"
-            coEvery { firestoreManager.updateEvent(updatedEvent) } returns Unit
+            val newImageUrl = "http://new.url"
+            coEvery { storageManager.uploadEventImage("1", imageUri) } returns newImageUrl
+            coEvery { firestoreManager.updateEvent(any()) } returns Unit
 
             runTest {
                 repository.updateEvent(event, imageUri)
             }
 
-            Then("le géocodage et l'upload sont effectués") {
-                coVerify { geocoderManager.geocode("Lyon") }
+            Then("l'image est uploadée et l'event mis à jour avec la nouvelle URL") {
                 coVerify { storageManager.uploadEventImage("1", imageUri) }
-                coVerify { firestoreManager.updateEvent(updatedEvent) }
+                coVerify { firestoreManager.updateEvent(match { it.imageUrl == newImageUrl }) }
+            }
+        }
+
+        When("aucune image n'est fournie") {
+            coEvery { firestoreManager.updateEvent(any()) } returns Unit
+
+            runTest {
+                repository.updateEvent(event, null)
+            }
+
+            Then("l'event est mis à jour avec son URL existante") {
+                coVerify { firestoreManager.updateEvent(match { it.imageUrl == "old_url" }) }
+                coVerify(exactly = 0) { storageManager.uploadEventImage(any(), any()) }
             }
         }
     }
@@ -135,7 +127,7 @@ class EventRepositoryImplTest : BehaviorSpec({
         val eventId = "1"
         val imageUrl = "http://image.url"
 
-        When("suppression de l'événement") {
+        When("suppression avec image") {
             coEvery { firestoreManager.deleteEvent(eventId) } returns Unit
             coEvery { storageManager.deleteEventImage(eventId) } returns Unit
 
@@ -143,22 +135,23 @@ class EventRepositoryImplTest : BehaviorSpec({
                 repository.deleteEvent(eventId, imageUrl)
             }
 
-            Then("firestore et storage sont sollicités") {
+            Then("on supprime le document et l'image") {
                 coVerify { firestoreManager.deleteEvent(eventId) }
                 coVerify { storageManager.deleteEventImage(eventId) }
             }
         }
+    }
 
-        When("suppression d'un événement sans image") {
-            coEvery { firestoreManager.deleteEvent(eventId) } returns Unit
+    Given("anonymizeOrganizerEvents") {
+        val uid = "user_123"
+        coEvery { firestoreManager.anonymizeOrganizerEvents(uid) } returns Unit
 
+        When("appel de anonymizeOrganizerEvents") {
             runTest {
-                repository.deleteEvent(eventId, "")
+                repository.anonymizeOrganizerEvents(uid)
             }
-
-            Then("storageManager n'est pas appelé") {
-                coVerify { firestoreManager.deleteEvent(eventId) }
-                coVerify(exactly = 0) { storageManager.deleteEventImage(any()) }
+            Then("doit déléguer à firestoreManager") {
+                coVerify { firestoreManager.anonymizeOrganizerEvents(uid) }
             }
         }
     }

@@ -12,62 +12,78 @@ import javax.inject.Singleton
 @Singleton
 class FakeUserProfileRepository @Inject constructor() : UserProfileRepository {
 
-    // On stocke les profils dans une liste en mémoire
-    private val profiles = MutableStateFlow<List<UserProfile>>(emptyList())
+    // On stocke les profils dans une liste en mémoire (notre "fausse" base de données)
+    private val _profiles = MutableStateFlow<List<UserProfile>>(emptyList())
 
-    // On simule un utilisateur connecté (null si déconnecté)
-    private var currentUserId: String? = "fake_current_uid"
+    // On simule un utilisateur connecté (par défaut "fake_current_uid")
+    private var _currentUserId: String? = "fake_current_uid"
 
-    // --- Outils pour les tests ---
+    // --- Outils pour les tests (pour préparer tes scénarios) ---
+
     fun setProfiles(list: List<UserProfile>) {
-        profiles.value = list
+        _profiles.value = list
     }
 
     fun setCurrentUserId(uid: String?) {
-        currentUserId = uid
+        _currentUserId = uid
     }
-    // -----------------------------
+    // -----------------------------------------------------------
 
     override fun getUserProfile(uid: String): Flow<UserProfile?> {
-        return profiles.map { list -> list.find { it.uid == uid } }
+        // Correction : on utilise _profiles et non _events
+        return _profiles.map { list -> list.find { it.uid == uid } }
     }
 
     override fun getCurrentUserId(): String? {
-        return currentUserId
+        return _currentUserId
     }
 
     override suspend fun createUserProfileIfMissing(profile: UserProfile) {
-        val exists = profiles.value.any { it.uid == profile.uid }
+        val exists = _profiles.value.any { it.uid == profile.uid }
         if (!exists) {
-            profiles.value = profiles.value + profile
+            _profiles.value = _profiles.value + profile
         }
     }
 
     override suspend fun updateNotificationSetting(uid: String, enabled: Boolean) {
-        // Optionnel : on pourrait mettre à jour le profil en mémoire si tu as un champ "notificationsEnabled"
+        _profiles.value = _profiles.value.map {
+            if (it.uid == uid) it.copy(notificationEnabled = enabled) else it
+        }
+    }
+
+    override suspend fun updateFcmToken(uid: String, token: String) {
+        _profiles.value = _profiles.value.map {
+            if (it.uid == uid) it.copy(fcmToken = token) else it
+        }
     }
 
     override suspend fun syncNotificationSubscription(enabled: Boolean) {
-        // Rien à faire en mémoire pour l'instant
+        // Rien à faire pour le fake
     }
 
     override suspend fun updateUserProfile(profile: UserProfile) {
-        profiles.value = profiles.value.map {
+        _profiles.value = _profiles.value.map {
             if (it.uid == profile.uid) profile else it
         }
     }
 
     override suspend fun uploadUserAvatar(uid: String, avatarUri: Uri): String {
-        // On retourne une fausse URL
         return "https://fake-storage.com/avatar_$uid.jpg"
     }
 
     override suspend fun deleteProfileData(uid: String, avatarUrl: String) {
-        profiles.value = profiles.value.filter { it.uid != uid }
+        _profiles.value = _profiles.value.filter { it.uid != uid }
     }
 
     override suspend fun deleteAuthAccount() {
-        // Simule la déconnexion / suppression
-        currentUserId = null
+        val oldUid = _currentUserId
+        _currentUserId = null
+        
+        // Correction : on nomme la variable uidToDelete pour éviter la confusion avec "it"
+        oldUid?.let { uidToDelete -> 
+            _profiles.value = _profiles.value.filter { profile -> 
+                profile.uid != uidToDelete 
+            } 
+        }
     }
 }

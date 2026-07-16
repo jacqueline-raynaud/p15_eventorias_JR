@@ -7,5 +7,6 @@ data class UserProfile (
     val lastName:String ="",
     val email:String ="",
     val avatarUrl:String ="",
-    val notificationEnabled:Boolean = false
+    val notificationEnabled:Boolean = false,
+    val fcmToken: String? = null // pour la fonction notification
 )

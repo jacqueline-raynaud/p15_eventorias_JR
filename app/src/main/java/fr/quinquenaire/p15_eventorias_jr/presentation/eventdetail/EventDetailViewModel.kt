@@ -34,7 +34,7 @@ class EventDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getEventDetailUseCase: GetEventDetailUseCase,
     getUserProfileUseCase: GetUserProfileUseCase,
-    private val getCurrentUidUseCase: GetCurrentUidUseCase,
+    getCurrentUidUseCase: GetCurrentUidUseCase,
     private val deleteEventUseCase: DeleteEventUseCase
 ) : ViewModel() {
 

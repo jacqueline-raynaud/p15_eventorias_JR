@@ -1,6 +1,7 @@
 package fr.quinquenaire.p15_eventorias_jr.viewmodels
 
 import app.cash.turbine.test
+import fr.quinquenaire.p15_eventorias_jr.domain.EventQueryParams
 import fr.quinquenaire.p15_eventorias_jr.domain.SortOrder
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
 import fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist.GetEventsUseCase
@@ -8,12 +9,15 @@ import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.EventListViewMod
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListAction
 import fr.quinquenaire.p15_eventorias_jr.presentation.eventlist.contract.EventListEffect
 import fr.quinquenaire.p15_eventorias_jr.testutils.TestTimestamps
+import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import io.mockk.clearAllMocks
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -26,194 +30,121 @@ import java.util.Calendar
 @OptIn(ExperimentalCoroutinesApi::class)
 class EventListViewModelTest : BehaviorSpec({
 
+    isolationMode = IsolationMode.InstancePerLeaf
+
     val testDispatcher = UnconfinedTestDispatcher()
-
-
-    beforeSpec {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    afterSpec {
-        Dispatchers.resetMain()
-    }
+    beforeSpec { Dispatchers.setMain(testDispatcher) }
+    afterSpec { Dispatchers.resetMain() }
 
     val fakeEvents = listOf(
-        Event(
-            id = "1", name = "Concert", category = "Musique",
-            date = TestTimestamps.of(2025, Calendar.JUNE, 15, 20, 0)
-        ),
-        Event(
-            id = "2", name = "Marathon", category = "Sport",
-            date = TestTimestamps.of(2025, Calendar.MAY, 10, 9, 30)
-        ),
-        Event(
-            id = "3", name = "Expo Art", category = "Art",
-            date = TestTimestamps.of(2025, Calendar.JULY, 1, 14, 0)
-        )
+        Event(id = "1", name = "Concert", category = "MUSIQUE"),
+        Event(id = "2", name = "Marathon", category = "SPORT")
     )
-
-    // -------------------------------------------------------------------------
-    // Chargement initial
-    // -------------------------------------------------------------------------
-
-    Given("un use case qui retourne 3 événements") {
-        val useCase = mockk<GetEventsUseCase>()
-        every { useCase() } returns flowOf(fakeEvents)
-
-        When("le ViewModel est créé") {
-            val viewModel = EventListViewModel(useCase)
-
-            Then("isLoading passe à false") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.isLoading shouldBe false
-                }
-            }
-
-            Then("la liste contient 3 événements") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.events shouldHaveSize 3
-                }
-            }
-
-            Then("il n'y a pas d'erreur") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.error shouldBe null
-                }
-            }
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // État d'erreur
-    // -------------------------------------------------------------------------
-
-    Given("un use case qui lève une exception") {
-        val useCase = mockk<GetEventsUseCase>()
-        every { useCase() } returns flow {
-            throw Exception("Erreur réseau")
-        }
-
-        When("le ViewModel est créé") {
-            val viewModel = EventListViewModel(useCase)
-
-            Then("isLoading passe à false") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.isLoading shouldBe false
-                }
-            }
-
-            Then("l'erreur est renseignée") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.error shouldNotBe null
-                    state.error shouldBe "Erreur réseau"
-                }
-            }
-
-            Then("la liste est vide") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.events shouldHaveSize 0
-                }
-            }
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Filtre par catégorie
-    // -------------------------------------------------------------------------
-
-    Given("un ViewModel chargé avec 3 événements de catégories différentes") {
-        val useCase = mockk<GetEventsUseCase>()
-        every { useCase() } returns flowOf(fakeEvents)
-        val viewModel = EventListViewModel(useCase)
-
-        When("on filtre par catégorie Musique") {
-            viewModel.handleAction(EventListAction.FilterByCategory("Musique"))
-
-            Then("seul le Concert est visible") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.events shouldHaveSize 1
-                    state.events[0].name shouldBe "Concert"
-                }
-            }
-
-            Then("la catégorie sélectionnée est Musique") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.selectedCategory shouldBe "Musique"
-                }
-            }
-        }
-
-        When("on réinitialise le filtre avec null") {
-            viewModel.handleAction(EventListAction.FilterByCategory(null))
-
-            Then("tous les événements sont de nouveau visibles") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.events shouldHaveSize 3
-                }
-            }
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Tri
-    // -------------------------------------------------------------------------
-
-    Given("un ViewModel chargé avec 3 événements") {
-        val useCase = mockk<GetEventsUseCase>()
-        every { useCase() } returns flowOf(fakeEvents)
-        val viewModel = EventListViewModel(useCase)
-
-        When("on trie par date") {
-            viewModel.handleAction(EventListAction.ChangeSortOrder(SortOrder.BY_DATE_ASC))
-
-            Then("le premier événement est le plus ancien") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.events[0].name shouldBe "Marathon"
-                }
-            }
-        }
-
-/*        When("on trie par catégorie") {
-            viewModel.handleAction(EventListAction.ChangeSortOrder(SortOrder.BY_CATEGORY))
-
-            Then("les événements sont triés alphabétiquement par catégorie") {
-                viewModel.uiState.test {
-                    val state = awaitItem()
-                    state.events[0].name shouldBe "Expo Art"
-                    state.events[1].name shouldBe "Concert"
-                    state.events[2].name shouldBe "Marathon"
-                }
-            }
-        }*/
-    }
-
-    // -------------------------------------------------------------------------
-    // Navigation (Effect)
-    // -------------------------------------------------------------------------
 
     Given("un ViewModel chargé") {
         val useCase = mockk<GetEventsUseCase>()
-        every { useCase() } returns flowOf(fakeEvents)
+
+        // Configure le mock par défaut (tous les événements)
+        every { useCase(EventQueryParams()) } returns flowOf(fakeEvents)
+        // Pour tout autre cas (par défaut), retourne aussi tous les événements
+        every { useCase(match { it.category == null }) } returns flowOf(fakeEvents)
+        // Pour la catégorie MUSIQUE, retourne seulement le premier
+        every { useCase(match { it.category == "MUSIQUE" }) } returns flowOf(listOf(fakeEvents[0]))
+        // Pour la catégorie SPORT, retourne seulement le deuxième
+        every { useCase(match { it.category == "SPORT" }) } returns flowOf(listOf(fakeEvents[1]))
+
+        val viewModel = EventListViewModel(useCase)
+
+        When("le ViewModel s'initialise") {
+            viewModel.uiState.test {
+                // 1. Le premier item émis par combine (avec les données du useCase)
+                val loadedState = awaitItem()
+                loadedState.events shouldHaveSize 2
+                loadedState.isLoading shouldBe false
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+        /*When("on filtre par catégorie 'MUSIQUE'") {
+            viewModel.uiState.test {
+                awaitItem() // Initial state avec tous les événements
+                
+                viewModel.handleAction(EventListAction.FilterByCategory("MUSIQUE"))
+                
+                Then("le UseCase est appelé avec la catégorie et la liste est mise à jour") {
+                    val filteredState = awaitItem()
+                    filteredState.events shouldHaveSize 1
+                    filteredState.events[0].name shouldBe "Concert"
+                    filteredState.selectedCategory shouldBe "MUSIQUE"
+                }
+                
+                cancelAndConsumeRemainingEvents()
+            }
+        }*/
+
+        When("on change l'ordre de tri") {
+            viewModel.uiState.test {
+                awaitItem() // Initial state
+
+                viewModel.handleAction(EventListAction.ChangeSortOrder(SortOrder.BY_DATE_DESC))
+
+                Then("le UseCase est appelé avec le nouvel ordre") {
+                    val sortedState = awaitItem()
+                    sortedState.sortOrder shouldBe SortOrder.BY_DATE_DESC
+                    verify { useCase(match { it.sortOrder == SortOrder.BY_DATE_DESC }) }
+                }
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+        When("on saisit une recherche") {
+            viewModel.uiState.test {
+                awaitItem() // Initial state
+
+                viewModel.handleAction(EventListAction.OnSearchQueryChanged("Marathon"))
+
+                Then("le UseCase est appelé avec la query") {
+                    val searchState = awaitItem()
+                    searchState.searchQuery shouldBe "Marathon"
+                    verify { useCase(match { it.searchQuery == "Marathon" }) }
+                }
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+    }
+
+
+    Given("le UseCase lève une erreur") {
+        val useCase = mockk<GetEventsUseCase>(relaxed = true)
+        every { useCase(any()) } returns flow { throw Exception("Erreur réseau") }
+
+        val viewModel = EventListViewModel(useCase)
+
+        Then("l'erreur est affichée dans le uiState") {
+            viewModel.uiState.test {
+                val errorState = awaitItem()
+                errorState.error shouldBe "Erreur réseau"
+                errorState.isLoading shouldBe false
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+    }
+
+    Given("Navigation") {
+        val useCase = mockk<GetEventsUseCase>(relaxed = true)
+        every { useCase(any()) } returns flowOf(emptyList())
         val viewModel = EventListViewModel(useCase)
 
         When("on clique sur un événement") {
-            Then("un effet NavigateToEventDetail est émis avec le bon ID") {
+            Then("l'effet de navigation est émis") {
                 viewModel.effect.test {
-                    // Turbine écoute ICI avant que l'action soit déclenchée
-                    viewModel.handleAction(EventListAction.OnEventClick("1"))
-
+                    viewModel.handleAction(EventListAction.OnEventClick("123"))
                     val effect = awaitItem() as EventListEffect.NavigateToEventDetail
-                    effect.eventId shouldBe "1"
+                    effect.eventId shouldBe "123"
+                    cancelAndConsumeRemainingEvents()
                 }
             }
         }

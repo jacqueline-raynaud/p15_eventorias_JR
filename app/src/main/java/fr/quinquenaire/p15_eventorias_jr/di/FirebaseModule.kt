@@ -1,4 +1,4 @@
-package fr.quinquenaire.p15_eventorias_jr.android.di
+package fr.quinquenaire.p15_eventorias_jr.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
