@@ -96,8 +96,7 @@ class CreateEventViewModel @Inject constructor(
                 state.hour!!,
                 state.minute!!
             )
-            // apple usecase
-
+            // appel usecase avec données brutes
             val result = createEventUseCase(
                 name = state.name,
                 description = state.description,

@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -35,56 +34,71 @@ class UserProfileViewModel @Inject constructor(
     private val deleteAccountUseCase: DeleteAccountUseCase
 ) : ViewModel() {
 
-    // brouillon d'édition — null tant que l'utilisateur n'a rien modifié
+    // Etat d'édition brouillon — null tant que l'utilisateur n'a rien modifié
     private val _editedFirstName = MutableStateFlow<String?>(null)
     private val _editedLastName = MutableStateFlow<String?>(null)
     private val _editedAvatarUri = MutableStateFlow<Uri?>(null)
-    private val _isSaving = MutableStateFlow(false)
 
-    // suppression de compte
+    //Etat systeme
+    private val _isSaving = MutableStateFlow(false)
     private val _showDeleteAccountConfirmation = MutableStateFlow(false)
     private val _isDeletingAccount = MutableStateFlow(false)
+    private val _error = MutableStateFlow<String?>(null)
 
+    // etat final ui
     val uiState: StateFlow<UserProfileMutableState> = combine(
-        getCurrentUserProfileUseCase(),
-        _editedFirstName,
-        _editedLastName,
-        _editedAvatarUri,
-        _isSaving,
-        _showDeleteAccountConfirmation,
-        _isDeletingAccount
-    ) { array ->
-        // combine à 5 sources → tableau (comme dans EventListViewModel)
-        @Suppress("UNCHECKED_CAST")
-        val profile = array[0] as UserProfile?
-        val editedFirstName = array[1] as String?
-        val editedLastName = array[2] as String?
-        val editedAvatarUri = array[3] as Uri?
-        val isSaving = array[4] as Boolean
-        val showDeleteAccountConfirmation = array[5] as Boolean
-        val isDeletingAccount = array[6] as Boolean
+        listOf(
+            getCurrentUserProfileUseCase(),
+            _editedFirstName,
+            _editedLastName,
+            _editedAvatarUri,
+            _isSaving,
+            _showDeleteAccountConfirmation,
+            _isDeletingAccount,
+            _error
+        )
+    ) { list ->
+        // On extrait les valeurs de manière typée et sûre
+        val profile = list[0] as UserProfile?
+        val fName = list[1] as String?
+        val lName = list[2] as String?
+        val avatar = list[3] as Uri?
+        val saving = list[4] as Boolean
+        val showDel = list[5] as Boolean
+        val deleting = list[6] as Boolean
+        val error = list[7] as String?
 
+        // Cas 1 : Suppression en cours
+        if (deleting) {
+            return@combine UserProfileMutableState(
+                isLoading = false,
+                isDeletingAccount = true,
+                showDeleteAccountConfirmation = showDel
+            )
+        }
+
+        // Cas 2 : Profil introuvable
         if (profile == null) {
-            UserProfileMutableState(
-                error = if (isDeletingAccount) null else "Profil introuvable",
-                isDeletingAccount = isDeletingAccount,
-                showDeleteAccountConfirmation = showDeleteAccountConfirmation
-            )
-        } else {
-            UserProfileMutableState(
-                profile = profile.toUi(),
-                editedFirstName = editedFirstName,
-                editedLastName = editedLastName,
-                editedAvatarUri = editedAvatarUri,
-                isSaving = isSaving,
-                showDeleteAccountConfirmation = showDeleteAccountConfirmation,
-                isDeletingAccount = isDeletingAccount
+            return@combine UserProfileMutableState(
+                isLoading = false,
+                error = error ?: "Profil introuvable",
+                showDeleteAccountConfirmation = showDel
             )
         }
+
+        // Cas 3 : Normal
+        UserProfileMutableState(
+            profile = profile.toUi(),
+            isLoading = false,
+            error = error,
+            editedFirstName = fName,
+            editedLastName = lName,
+            editedAvatarUri = avatar,
+            isSaving = saving,
+            showDeleteAccountConfirmation = showDel,
+            isDeletingAccount = deleting
+        )
     }
-        .catch { e ->
-            emit(UserProfileMutableState(error = e.message))
-        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

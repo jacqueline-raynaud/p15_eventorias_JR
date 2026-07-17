@@ -29,11 +29,6 @@ class EventListViewModel @Inject constructor(
     private val getEventsUseCase: GetEventsUseCase
 ) : ViewModel() {
 
-    /*private val _selectedCategory = MutableStateFlow<String?>(null)
-    private val _sortOrder = MutableStateFlow(SortOrder.BY_DATE_ASC)
-    private val _error = MutableStateFlow<String?>(null)
-    private val _searchQuery = MutableStateFlow("")
-    private val _reloadTrigger = MutableStateFlow(0)*/
 
     // --- États UI (Inputs) ---
     private val _selectedCategory = MutableStateFlow<String?>(null)
@@ -41,74 +36,8 @@ class EventListViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     private val _error = MutableStateFlow<String?>(null)
 
-    // Flow des événements mappés depuis Firestore
-    /* private val _allEvents: StateFlow<List<EventListUiState>> = getEventsUseCase()
-         .map { events -> events.map { it.toUi() } }
-         .catch { e -> _error.update { e.message } }
-         .stateIn(
-             scope = viewModelScope,
-             started = SharingStarted.WhileSubscribed(5_000),
-             initialValue = emptyList()
-         )
 
-     // État final exposé à la vue — combine les 4 sources
-     val uiState: StateFlow<EventListMutableState> = combine(
-         _allEvents,
-         _selectedCategory,
-         _sortOrder,
-         _error,
-         _searchQuery
-     ) {  events, category, sortOrder, error, query ->
-
-         EventListMutableState(
-             events = events
-                 .filter { event ->
-                     category == null || event.category == category }
-                 .filter { event ->
-                     query.isBlank()
-                             || event.name.contains(query, ignoreCase = true)
-                             || event.locationName.contains(query, ignoreCase = true)}
-                 .let { list ->
-                     when (sortOrder) {
-                         SortOrder.DEFAULT -> list
-                         SortOrder.BY_DATE_ASC  -> list.sortedBy { it.rawDate?.seconds ?:0 }
-                         SortOrder.BY_DATE_DESC-> list.sortedByDescending { it.rawDate?.seconds ?:0  }
-                         //SortOrder.BY_CATEGORY -> list.sortedBy { it.category }
-
-                     }
-                 },
-             isLoading = false,
-             error = error,
-             selectedCategory = category,
-             sortOrder = sortOrder,
-             searchQuery = query
-         )
-     }
-         .stateIn(
-             scope = viewModelScope,
-             started = SharingStarted.WhileSubscribed(5_000),
-             initialValue = EventListMutableState(isLoading = true)
-         )
-
-     // Effets ponctuels
-     private val _effect = MutableSharedFlow<EventListEffect>()
-     val effect: SharedFlow<EventListEffect> = _effect.asSharedFlow()
-
-     fun handleAction(action: EventListAction) {
-         when (action) {
-             is EventListAction.LoadEvents       -> {
-                 _error.update { null }        // efface l'erreur
-                 _reloadTrigger.update { it + 1 }  // relance flatMapLatest
-             }
-             is EventListAction.FilterByCategory -> _selectedCategory.update { action.category }
-             is EventListAction.ChangeSortOrder  -> _sortOrder.update { action.sortOrder }
-             is EventListAction.OnEventClick     -> onEventClick(action.eventId)
-             is EventListAction.OnCreateEventClick -> OnCreateEventClick()
-             is EventListAction.OnSearchQueryChanged -> _searchQuery.update { action.query }
-         }
-     }*/
-// --- Combinaison des inputs pour créer les paramètres de requête ---
-    // Dès que l'utilisateur change un filtre, ce flow émet un nouveau "params"
+    // --- Combinaison des inputs pour créer les paramètres de requête ---
     private val queryParamsFlow: StateFlow<EventQueryParams> = combine(
         _selectedCategory,
         _sortOrder,
@@ -125,10 +54,10 @@ class EventListViewModel @Inject constructor(
         initialValue = EventQueryParams()
     )
 
-    // --- État Final (Output) ---
+    // --- État Final ---
 
     val uiState: StateFlow<EventListMutableState> = combine(
-        // 1. On appelle le UseCase avec le flow de paramètres > Ça relance la requête automatiquement
+        // 1. Appel UseCase avec le flow de paramètres
         queryParamsFlow.flatMapLatest { params ->
             getEventsUseCase(params)
                 .catch { e ->
@@ -141,7 +70,6 @@ class EventListViewModel @Inject constructor(
         _sortOrder,
         _searchQuery
     ) { events, error, category, sort, query ->
-
         EventListMutableState(
             events = events.map { it.toUi() },
             isLoading = false,
@@ -156,7 +84,7 @@ class EventListViewModel @Inject constructor(
         initialValue = EventListMutableState(isLoading = true)
     )
 
-    // --- Effets & Actions (Inchangés, car purement UI) ---
+    // --- Effets & Actions  ---
     private val _effect = MutableSharedFlow<EventListEffect>()
     val effect: SharedFlow<EventListEffect> = _effect.asSharedFlow()
 
@@ -173,17 +101,6 @@ class EventListViewModel @Inject constructor(
         }
     }
 
-    /*private fun onEventClick(eventId: String) {
-        viewModelScope.launch {
-            _effect.emit(EventListEffect.NavigateToEventDetail(eventId))
-        }
-    }
-
-    private fun OnCreateEventClick() {
-        viewModelScope.launch {
-            _effect.emit(EventListEffect.NavigateToCreateEvent)
-        }
-    }*/
     private fun onEventClick(eventId: String) {
         viewModelScope.launch { _effect.emit(EventListEffect.NavigateToEventDetail(eventId)) }
     }

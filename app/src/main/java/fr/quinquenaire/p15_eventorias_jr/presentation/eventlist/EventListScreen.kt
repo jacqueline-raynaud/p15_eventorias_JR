@@ -74,9 +74,7 @@ import fr.quinquenaire.p15_eventorias_jr.presentation.theme.P15_eventorias_jrThe
 import kotlinx.coroutines.flow.collectLatest
 
 
-// ---------------------------------------------------------------------------
-// Screen entry point - Statefull
-// ---------------------------------------------------------------------------
+// --- Screen entry point - Statefull ---
 
 @Composable
 fun EventListScreen(
@@ -112,9 +110,7 @@ fun EventListScreen(
     )
 }
 
-// ---------------------------------------------------------------------------
-// content - Stateless
-// ---------------------------------------------------------------------------
+// --- content - Stateless---
 
 @Composable
 fun EventListContent(
@@ -186,9 +182,7 @@ Scaffold(
     }
 }
 
-// ---------------------------------------------------------------------------
-// TopBar avec tri et recherche
-// ---------------------------------------------------------------------------
+// --- TopBar avec tri et recherche---
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -242,7 +236,7 @@ private fun EventListTopBar(
                 // Croix pour vider le champ de texte rapidement
                 if (searchQuery.isNotEmpty()) {
                     IconButton(onClick = { onSearchQueryChanged("") }) {
-                        Icon(Icons.Default.Close, contentDescription = "Effacer")
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.delete))
                     }
                 }
             }
@@ -290,9 +284,7 @@ private fun EventListTopBar(
     }
 }
 
-// ---------------------------------------------------------------------------
-// Filtre catégories (chips horizontaux)
-// ---------------------------------------------------------------------------
+// --- Filtre catégories (chips horizontaux) ---
 
 private val CATEGORIES = EventCategory.entries
 
@@ -325,9 +317,7 @@ private fun CategoryFilterBar(
     }
 }
 
-// ---------------------------------------------------------------------------
-// État : chargement
-// ---------------------------------------------------------------------------
+// --- État : chargement---
 
 @Composable
 private fun LoadingContent() {

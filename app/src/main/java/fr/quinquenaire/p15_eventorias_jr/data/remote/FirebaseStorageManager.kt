@@ -15,7 +15,6 @@ class FirebaseStorageManager(private val firebaseStorage: FirebaseStorage) {
             imageRef.putFile(imageUri).await()
             imageRef.downloadUrl.await().toString()
         } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error uploading event image")
             Log.e("EventoriasApp", "Error uploading event image", e)
             throw e
         }

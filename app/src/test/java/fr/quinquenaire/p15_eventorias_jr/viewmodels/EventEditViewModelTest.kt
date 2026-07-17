@@ -124,6 +124,7 @@ class EventEditViewModelTest : BehaviorSpec({
                 }
                 coVerify { updateEventUseCase(eventId, capture(eventSlot), null) }
                 eventSlot.captured.location shouldBe referenceLocation
+                eventSlot.captured.locationName shouldBe "Paris"
             }
         }
     }
@@ -133,15 +134,17 @@ class EventEditViewModelTest : BehaviorSpec({
         viewModel.handleAction(EventEditAction.OnAddressChange("Lyon"))
 
         When("OnSaveClick") {
-            Then("l'objet est envoyé pour mise à jour") {
-                viewModel.effect.test {
-                    viewModel.handleAction(EventEditAction.OnSaveClick)
-                    awaitItem() shouldBe EventEditEffect.NavigateBack
-                }
-                coVerify { updateEventUseCase(eventId, capture(eventSlot), null) }
+            Then ("la localisation est mise à null pour le géocodage")
+            viewModel.effect.test {
+                viewModel.handleAction(EventEditAction.OnSaveClick)
+                awaitItem() shouldBe EventEditEffect.NavigateBack
+            }
+            coVerify { updateEventUseCase(eventId, capture(eventSlot), null) }
+            eventSlot.captured.location shouldBe null
+            eventSlot.captured.locationName shouldBe "Lyon"
             }
         }
-    }
+
 
     Given("la sauvegarde échoue") {
         val (viewModel, _, _) = buildViewModel(updateError = "Erreur de mise à jour")

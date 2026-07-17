@@ -11,15 +11,4 @@ class GetEventsUseCase @Inject constructor (private val repository: EventReposit
     operator fun invoke(params: EventQueryParams): Flow<List<Event>> {
         return repository.getEventsStream(params)
     }
-/*    operator fun invoke() : Flow<List<Event>> {
-        return eventRepository.getEvents()
-    }
-
-    fun searchEvents(query: String): Flow<List<Event>> {
-        return eventRepository.searchEvents(query)
-    }
-
-    fun getEventsByCategory(category: String): Flow<List<Event>> {
-        return eventRepository.getEventsByCategory(category)
-    }*/
 }

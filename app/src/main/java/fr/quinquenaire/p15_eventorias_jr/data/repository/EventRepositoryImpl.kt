@@ -81,9 +81,6 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-/*    override fun getEventsByCategory(category: String): Flow<List<Event>> {
-        return firestoreManager.getEventsByCategory(category)
-    }*/
 
     override fun getEventDetail(eventId: String): Flow<Event?> {
         return firestoreManager.getEventDetail(eventId)

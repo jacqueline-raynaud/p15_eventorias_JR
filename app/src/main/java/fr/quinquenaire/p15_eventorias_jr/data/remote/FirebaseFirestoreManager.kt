@@ -74,7 +74,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             ref.set(eventToSave).await()
             ref.id
         } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error creating event")
             Log.e("EventoriasApp", "Error creating event", e)
             throw e
         }

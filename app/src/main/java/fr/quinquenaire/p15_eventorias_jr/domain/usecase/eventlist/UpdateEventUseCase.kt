@@ -1,6 +1,7 @@
 package fr.quinquenaire.p15_eventorias_jr.domain.usecase.eventlist
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.firestore.GeoPoint
 import fr.quinquenaire.p15_eventorias_jr.data.location.GeocoderManager
 import fr.quinquenaire.p15_eventorias_jr.domain.model.Event
@@ -18,29 +19,22 @@ class UpdateEventUseCase @Inject constructor(
         imageUri: Uri?
     ): Result<Unit> = try {
 
-        // 1 récupère l'évent
-        val currentEvent = eventRepository.getEventDetail(eventId).first()
-            ?: return Result.failure(Exception("Event not found"))
+       val finalLocation = if (updatedEvent.location == null) {
+           val newLocation = geocoderManager.geocode(updatedEvent.locationName)
+           newLocation ?: return Result.failure(Exception("Adresse introuvable : ${updatedEvent.locationName}"))
+       } else {
+           updatedEvent.location
+       }
 
-        // 2. logique de geocodage si adresse changée
-        val finalLocation: GeoPoint? = if (updatedEvent.locationName != currentEvent.locationName) {
-            geocoderManager.geocode(updatedEvent.locationName)
-            // Si  géocodage  null, garde ancienne adresse.
-                ?: currentEvent.location
-        } else {
-            // L'adresse n'a pas changé : on conserve les coordonnées existantes
-            currentEvent.location
-        }
+       // 3. objet à sauvegarder
+       val eventToSave = updatedEvent.copy(location = finalLocation)
 
-        // 3. objet à sauvegarder
-        val eventToSave = updatedEvent.copy(location = finalLocation)
+       // 4. Appel au Repository pour la persistance (et upload image si besoin)
+       eventRepository.updateEvent(eventToSave, imageUri)
 
-        // 4. Appel au Repository pour la persistance (et upload image si besoin)
-        eventRepository.updateEvent(eventToSave, imageUri)
+       Result.success(Unit)
 
-        Result.success(Unit)
-
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
+   } catch (e: Exception) {
+       Result.failure(e)
+   }
 }

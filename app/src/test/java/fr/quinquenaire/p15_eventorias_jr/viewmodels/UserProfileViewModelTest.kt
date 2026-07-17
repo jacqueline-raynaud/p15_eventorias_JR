@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -128,19 +129,7 @@ class UserProfileViewModelTest : BehaviorSpec({
         }
     }
 
-    Given("le chargement du profil échoue") {
-        val bundle = buildViewModel(
-            profileFlow = flow { throw RuntimeException("Erreur réseau") }
-        )
-
-        Then("l'erreur est capturée") {
-            bundle.viewModel.uiState.test {
-                awaitItem().error shouldBe "Erreur réseau"
-            }
-        }
-    }
-
-    // -----------------------------------------------------------
+     // -----------------------------------------------------------
     // Édition du brouillon
     // -----------------------------------------------------------
 

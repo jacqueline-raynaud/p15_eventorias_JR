@@ -48,7 +48,7 @@ class UpdateEventUseCaseTest : BehaviorSpec({
         When("on change l'adresse et le géocodage réussit") {
             val newLocation = "Lyon"
             val newGeoPoint = GeoPoint(45.7640, 4.8357)
-            val updatedEvent = currentEvent.copy(locationName = newLocation)
+            val updatedEvent = currentEvent.copy(locationName = newLocation, location=null)
             
             coEvery { geocoderManager.geocode(newLocation) } returns newGeoPoint
             coEvery { eventRepository.updateEvent(any(), any()) } returns Unit
@@ -59,18 +59,6 @@ class UpdateEventUseCaseTest : BehaviorSpec({
                 result.isSuccess shouldBe true
                 coVerify { geocoderManager.geocode(newLocation) }
                 coVerify { eventRepository.updateEvent(match { it.location == newGeoPoint }, null) }
-            }
-        }
-
-        When("l'événement n'est pas trouvé dans la base") {
-            every { eventRepository.getEventDetail(eventId) } returns flowOf(null)
-            val updatedEvent = currentEvent.copy(name = "Test")
-
-            val result = useCase(eventId, updatedEvent, null)
-
-            Then("il retourne un échec") {
-                result.isFailure shouldBe true
-                result.exceptionOrNull()?.message shouldBe "Event not found"
             }
         }
     }

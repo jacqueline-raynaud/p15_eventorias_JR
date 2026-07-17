@@ -22,13 +22,8 @@ class CreateEventUseCase @Inject constructor(
     ): Result<String> = try {
         // 1. Géocodage
         val location = geocoderManager.geocode(locationName)
-        // Optionnel : Si location est null, vous pouvez retourner une erreur ou continuer sans coords
         if (location == null) {
-            // Option A : On échoue carrément si on ne trouve pas l'adresse
             return Result.failure(Exception("Adresse introuvable : $locationName"))
-
-            // Option B (plus souple) : On crée sans coords (comme avant)
-            // val geoPoint = null
         }
 
         // 2. Construction de l'objet Event
