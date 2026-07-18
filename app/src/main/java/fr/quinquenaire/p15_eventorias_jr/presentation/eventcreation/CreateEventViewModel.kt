@@ -100,24 +100,17 @@ class CreateEventViewModel @Inject constructor(
 
                 val dateTimestamp = buildTimestamp(dateMillis, hour, minute)
 
-
-            /*val dateTimestamp = buildTimestamp(
-                state.dateMillis!!,
-                state.hour!!,
-                state.minute!!
-            )*/
-
-            // appel usecase avec données brutes
-            createEventUseCase(
-                name = state.name,
-                description = state.description,
-                date = dateTimestamp,
-                locationName = state.address,
-                category = state.category.name,
-                organizerId = organizerId,
-                imageUri = state.imageUri
-            )
-        }
+                // appel usecase avec données brutes
+                createEventUseCase(
+                    name = state.name,
+                    description = state.description,
+                    date = dateTimestamp,
+                    locationName = state.address,
+                    category = category.name,
+                    organizerId = organizerId,
+                    imageUri = state.imageUri
+                ).getOrThrow()
+            }
 
             result.fold(
                 onSuccess = {
