@@ -19,7 +19,6 @@ object TestFirebaseModule {
     @Provides
     @Singleton
     fun provideFirebaseMessaging(): FirebaseMessaging {
-        // MockK fonctionnera maintenant car nous avons ajouté la dépendance dans le gradle
         return mockk(relaxed = true)
     }
 }

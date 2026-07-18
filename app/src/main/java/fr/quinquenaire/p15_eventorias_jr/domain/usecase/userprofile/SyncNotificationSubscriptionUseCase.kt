@@ -17,10 +17,5 @@ class SyncNotificationSubscriptionUseCase @Inject constructor(
         if (token != null) {
             userProfileRepository.updateFcmToken(uid, token)
         }
-/*
-        // abonnement aux topics
-        val profile = userProfileRepository.getUserProfile(uid).first() ?: return
-        userProfileRepository.syncNotificationSubscription(profile.notificationEnabled)
-    */
     }
 }

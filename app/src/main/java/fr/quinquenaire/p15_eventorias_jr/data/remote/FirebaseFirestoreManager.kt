@@ -47,7 +47,7 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
 
 
     // if the database grows
-    fun searchEvents(query: String): Flow<List<Event>> = callbackFlow {
+    /*fun searchEvents(query: String): Flow<List<Event>> = callbackFlow {
         val listener = firestore.collection("events")
             .orderBy("name")
             .startAt(query)
@@ -63,7 +63,7 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
                 trySend(events)
             }
         awaitClose { listener.remove() }
-    }
+    }*/
 
     suspend fun createEvent(event: Event): String {
         return try {
@@ -106,7 +106,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
             )
             firestore.collection("events").document(event.id).update(updateMap).await()
         } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error updating event")
             Log.e("EventoriasApp", "Error updating event", e)
             throw e
         }
@@ -116,7 +115,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         try {
             firestore.collection("events").document(eventId).delete().await()
         } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error deleting event")
             Log.e("EventoriasApp", "Error deleting event", e)
             throw e
         }
@@ -154,7 +152,6 @@ class FirebaseFirestoreManager(private val firestore: FirebaseFirestore) {
         try {
             firestore.collection("users").document(user.uid).set(user).await()
         } catch (e: Exception) {
-            //Log.e("EventoriasApp", e, "Error creating user profile")
             Log.e("EventoriasApp", "Error creating user profile", e)
             throw e
         }

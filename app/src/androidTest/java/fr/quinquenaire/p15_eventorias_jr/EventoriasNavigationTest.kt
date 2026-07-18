@@ -58,6 +58,10 @@ class EventoriasNavigationTest {
 
         (eventRepository as FakeEventRepository).setEvents(listOf(fakeEvent))
         (userProfileRepository as FakeUserProfileRepository).apply {
+            // initialisation du profil de l'organisateur
+            setCurrentUserId(null)  // ← Réinitialiser d'abord
+            setProfiles(emptyList())  // ← Réinitialiser d'abord
+            // données à utiliser
             setCurrentUserId(organizerId)
             setProfiles(
                 listOf(
@@ -72,7 +76,7 @@ class EventoriasNavigationTest {
                 )
             )
         }
-
+        (eventRepository as FakeEventRepository).setEvents(listOf(fakeEvent))
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
@@ -91,6 +95,8 @@ class EventoriasNavigationTest {
         composeTestRule.onNodeWithText("Soirée Jazz au Parc").performClick()
         composeTestRule.onNodeWithText("Une soirée inoubliable sous les étoiles.")
             .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Event Detail Menu").assertIsDisplayed()
+
 
         // 2. Menu -> Modifier -> EventEdit, pré-rempli avec le bon événement
         composeTestRule.onNodeWithContentDescription("Event Detail Menu").performClick()
