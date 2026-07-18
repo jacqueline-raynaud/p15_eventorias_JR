@@ -19,8 +19,12 @@ data class CreateEventMutableState(
     val error: String? = null
 ) {
     val isFormValid: Boolean
-        get() = name.trim().isNotBlank() && category != null &&
-                dateMillis != null && hour != null && address.trim().isNotBlank()
+        get() = name.trim().isNotBlank() &&
+                category != null &&
+                dateMillis != null
+                && hour != null
+                && minute != null
+                && address.trim().isNotBlank()
 
     val dateLabel: String
         get() = dateMillis?.let {

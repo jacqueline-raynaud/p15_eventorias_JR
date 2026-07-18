@@ -90,22 +90,34 @@ class CreateEventViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, error = null) }
 
-            // construction date au format ui
-            val dateTimestamp = buildTimestamp(
+            // construction date au format ui - try catch pour éviter crash
+            val result = runCatching {
+                val dateMillis =
+                    state.dateMillis ?: throw IllegalArgumentException("Date manquante")
+                val hour = state.hour ?: throw IllegalStateException("Heure manquante")
+                val minute = state.minute ?: throw IllegalStateException("Minutes manquantes")
+                val category = state.category ?: throw IllegalStateException("Catégorie manquante")
+
+                val dateTimestamp = buildTimestamp(dateMillis, hour, minute)
+
+
+            /*val dateTimestamp = buildTimestamp(
                 state.dateMillis!!,
                 state.hour!!,
                 state.minute!!
-            )
+            )*/
+
             // appel usecase avec données brutes
-            val result = createEventUseCase(
+            createEventUseCase(
                 name = state.name,
                 description = state.description,
                 date = dateTimestamp,
                 locationName = state.address,
-                category = state.category!!.name,
+                category = state.category.name,
                 organizerId = organizerId,
                 imageUri = state.imageUri
             )
+        }
 
             result.fold(
                 onSuccess = {
