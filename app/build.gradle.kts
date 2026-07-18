@@ -126,6 +126,7 @@ dependencies {
 
     // Testing - Instrumented Tests
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
