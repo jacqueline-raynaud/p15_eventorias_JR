@@ -1,5 +1,7 @@
 package fr.quinquenaire.p15_eventorias_jr
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -8,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.google.firebase.Timestamp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -31,7 +34,16 @@ class EventoriasNavigationTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
+    // Pré-accorde la permission de notification pour éviter que la boîte de dialogue
+    // système ne masque l'UI de l'app pendant le test (Android 13+)
     @get:Rule(order = 1)
+    val notificationPermissionRule: GrantPermissionRule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        GrantPermissionRule.grant()
+    }
+
+    @get:Rule(order = 2)
     val composeTestRule = createEmptyComposeRule()
 
     @Inject lateinit var eventRepository: EventRepository

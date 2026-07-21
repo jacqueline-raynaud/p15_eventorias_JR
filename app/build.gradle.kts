@@ -10,6 +10,13 @@ plugins {
     jacoco
 }
 
+// Verrouille les versions resolues des dependances (y compris transitives) pour des
+// builds reproductibles. Regenerer avec `./gradlew :app:dependencies --write-locks`
+// a chaque ajout/modification de dependance.
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 android {
     namespace = "fr.quinquenaire.p15_eventorias_jr"
     compileSdk = 36
@@ -126,6 +133,7 @@ dependencies {
 
     // Testing - Instrumented Tests
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
