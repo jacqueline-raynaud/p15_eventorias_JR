@@ -10,6 +10,13 @@ plugins {
     jacoco
 }
 
+// Verrouille les versions resolues des dependances (y compris transitives) pour des
+// builds reproductibles. Regenerer avec `./gradlew :app:dependencies --write-locks`
+// a chaque ajout/modification de dependance.
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 android {
     namespace = "fr.quinquenaire.p15_eventorias_jr"
     compileSdk = 36
